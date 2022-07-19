@@ -11,7 +11,7 @@ const defaultStatuses = [
   'New',
   'In Progress',
   'Completed'
-] as const
+]
 
 
 const defaultTodos = [
@@ -55,18 +55,33 @@ function TodoListItem({ value }: { value: string }) {
   return <li className="flex gap-2"><input type="checkbox" />{value}</li>
 }
 
-function AddKanbanItem({ status }: { status: string }) {
+function AddKanbanItem({ onSubmit }: { onSubmit: (value: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState('')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSubmit(value);
+      setValue('');
+      setIsOpen(false)
+    }
+  }
 
   if (isOpen) {
     return (
       <div className="flex gap-2 pt-2 items-center">
         <IconButton onClick={() => setIsOpen(false)}>⨉</IconButton>
-        <input type="text" className="rounded-lg border-2 px-2" value={value} onChange={handleChange} />
+        <input
+          type="text"
+          className="rounded-lg border-2 px-2"
+          value={value}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
       </div>
     )
   }
@@ -107,7 +122,16 @@ function Kanban() {
   const [statuses, setStatuses] = useState(defaultStatuses);
   const [todos, setTodos] = useState(defaultTodos);
 
-  const numStatuses = statuses.length;
+  const handleCreateStatus = (status: string) => {
+    setStatuses([...statuses, status]);
+  }
+
+  const handleCreateItem = (title: string, status: string) => {
+    setTodos([
+      ...todos,
+      { id: todos.length + 1, title, completed: false, status }
+    ]);
+  }
 
   return (
     <div className="flex">
@@ -120,7 +144,7 @@ function Kanban() {
         />
       ))}
       <div className="flex-shrink h-10">
-        <AddKanbanItem status={""} />
+        <AddKanbanItem onSubmit={handleCreateStatus} />
       </div>
     </div >
   )
