@@ -2,7 +2,7 @@ import { HTMLProps, useState } from 'react'
 
 interface TodoItem {
   id: number;
-  title: string;
+  value: string;
   completed: boolean;
   status: string;
 }
@@ -15,38 +15,39 @@ const defaultStatuses = [
 
 
 const defaultTodos = [
-  { id: 1, title: 'Learn React', completed: false, status: "In Progress" },
-  { id: 2, title: 'Learn TypeScript', completed: false, status: "In Progress" },
-  { id: 3, title: 'Learn React Native', completed: false, status: "New" },
-  { id: 4, title: 'Learn GraphQL', completed: false, status: "New" },
-  { id: 5, title: 'Learn Next.js', completed: false, status: "New" },
-  { id: 6, title: 'Learn Node.js', completed: false, status: "New" },
-  { id: 7, title: 'Learn MongoDB', completed: false, status: "New" },
-  { id: 8, title: 'Learn SQL', completed: false, status: "New" },
-  { id: 9, title: 'Learn Python', completed: false, status: "In Progress" },
-  { id: 10, title: 'Learn Java', completed: false, status: "In Progress" },
-  { id: 11, title: 'Learn C++', completed: false, status: "In Progress" },
-  { id: 12, title: 'Learn C#', completed: false, status: "New" },
-  { id: 13, title: 'Learn Go', completed: false, status: "New" },
-  { id: 14, title: 'Learn Rust', completed: false, status: "New" },
-  { id: 15, title: 'Learn Kotlin', completed: false, status: "New" },
-  { id: 16, title: 'Learn Swift', completed: false, status: "New" },
-  { id: 17, title: 'Learn Elixir', completed: false, status: "New" },
-  { id: 18, title: 'Learn Ruby', completed: false, status: "New" },
-  { id: 19, title: 'Learn PHP', completed: false, status: "New" },
-  { id: 20, title: 'Learn JavaScript', completed: false, status: "Completed" },
+  { id: 0, value: 'Learn JavaScript', completed: false, status: "Completed" },
+  { id: 1, value: 'Learn React', completed: false, status: "In Progress" },
+  { id: 2, value: 'Learn TypeScript', completed: false, status: "In Progress" },
+  { id: 3, value: 'Learn React Native', completed: false, status: "New" },
+  { id: 4, value: 'Learn GraphQL', completed: false, status: "New" },
+  { id: 5, value: 'Learn Next.js', completed: false, status: "New" },
+  { id: 6, value: 'Learn Node.js', completed: false, status: "New" },
+  { id: 7, value: 'Learn MongoDB', completed: false, status: "New" },
+  { id: 8, value: 'Learn SQL', completed: false, status: "New" },
+  { id: 9, value: 'Learn Python', completed: false, status: "In Progress" },
+  { id: 10, value: 'Learn Java', completed: false, status: "In Progress" },
+  { id: 11, value: 'Learn C++', completed: false, status: "In Progress" },
+  { id: 12, value: 'Learn C#', completed: false, status: "New" },
+  { id: 13, value: 'Learn Go', completed: false, status: "New" },
+  { id: 14, value: 'Learn Rust', completed: false, status: "New" },
+  { id: 15, value: 'Learn Kotlin', completed: false, status: "New" },
+  { id: 16, value: 'Learn Swift', completed: false, status: "New" },
+  { id: 17, value: 'Learn Elixir', completed: false, status: "New" },
+  { id: 18, value: 'Learn Ruby', completed: false, status: "New" },
+  { id: 19, value: 'Learn PHP', completed: false, status: "New" },
 ] as TodoItem[]
 
 interface KanbanColumnProps extends HTMLProps<HTMLDivElement> {
-  title: string;
+  status: string;
   items: TodoItem[];
+  onCreateItem: (item: string) => void;
 }
 
-function KanbanColumnHeader({ title }: { title: string }) {
+function KanbanColumnHeader({ status }: { status: string }) {
   return (
     <div className="flex items-center gap-2 pb-2">
       <input type="checkbox" />
-      <h2 className='text-xl font-bold'>{title}</h2>
+      <h2 className='text-xl font-bold'>{status}</h2>
     </div>
   )
 }
@@ -93,14 +94,14 @@ function AddKanbanItem({ onSubmit }: { onSubmit: (value: string) => void }) {
   )
 }
 
-function KanbanColumn({ title, items, ...props }: KanbanColumnProps) {
+function KanbanColumn({ status, items, onCreateItem, ...props }: KanbanColumnProps) {
   return (
     <div {...props}>
-      <KanbanColumnHeader title={title} />
+      <KanbanColumnHeader status={status} />
       <ul className="flex flex-col">
-        {items.map((item) => <TodoListItem value={item.title} />)}
+        {items.map((item) => <TodoListItem value={item.value} />)}
       </ul>
-      <AddKanbanItem status={title} />
+      <AddKanbanItem onSubmit={(item) => onCreateItem(item)} />
     </div>
   )
 }
@@ -126,21 +127,23 @@ function Kanban() {
     setStatuses([...statuses, status]);
   }
 
-  const handleCreateItem = (title: string, status: string) => {
+  const handleCreateItem = (value: string, status: string) => {
     setTodos([
       ...todos,
-      { id: todos.length + 1, title, completed: false, status }
+      { id: todos.length + 1, value, completed: false, status }
     ]);
+    console.log({ id: todos.length + 1, value, completed: false, status })
   }
 
   return (
     <div className="flex">
       {statuses.map(status => (
         <KanbanColumn
-          title={status}
+          status={status}
           items={todos.filter(todo => todo.status === status)}
           key={status}
           className="flex-1"
+          onCreateItem={(value: string) => handleCreateItem(value, status)}
         />
       ))}
       <div className="flex-shrink h-10">
