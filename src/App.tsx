@@ -52,8 +52,24 @@ function KanbanColumnHeader({ status }: { status: string }) {
   )
 }
 
-function TodoListItem({ value }: { value: string }) {
-  return <li className="flex gap-2"><input type="checkbox" />{value}</li>
+function KanbanItemMenu({ value }: { value: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return <div className="relative">
+    <IconButton onClick={() => setIsOpen(!isOpen)}>?</IconButton>
+    {isOpen && (
+      <div className="absolute top-0 left-0 bg-white rounded-xl p-8 shadow-xl z-10">
+        <IconButton onClick={() => setIsOpen(false)}>⨉</IconButton>
+        <ul>
+          <li>Change Status</li>
+        </ul>
+      </div>
+    )}
+  </div>
+}
+
+function KanbanItem({ value }: { value: string }) {
+  return <li className="flex gap-2 pr-4"><input type="checkbox" />{value}<div className="flex-1" /><KanbanItemMenu value={value} /></li>
 }
 
 function AddKanbanItem({ onSubmit }: { onSubmit: (value: string) => void }) {
@@ -99,7 +115,7 @@ function KanbanColumn({ status, items, onCreateItem, ...props }: KanbanColumnPro
     <div {...props}>
       <KanbanColumnHeader status={status} />
       <ul className="flex flex-col">
-        {items.map((item) => <TodoListItem value={item.value} />)}
+        {items.map((item) => <KanbanItem value={item.value} />)}
       </ul>
       <AddKanbanItem onSubmit={(item) => onCreateItem(item)} />
     </div>
