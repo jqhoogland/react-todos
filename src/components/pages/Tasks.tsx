@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { Header } from "../layout";
-import { defaultTodoItem, TodoItem } from "../../data";
+import { defaultTodoItem, TodoItem , defaultTodos} from "../../data";
 import { Status, statuses } from "../../data";
 
 function Tasks() {
-    const [todos, setTodos] = useState<TodoItem[]>([])
+    const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
 
     const handleCreateItem: OnCreateItem = (item = {}) => {
         setTodos([...todos, { id: todos.length, ...defaultTodoItem, value: `Todo #${todos.length}`, ...item }])
@@ -62,14 +62,15 @@ function TodoList({ title, todos, onCreateItem, onUpdateItem }: TodoListProps) {
 
 interface TodoItemProps {
     value: string
+    status: Status['value'];
     onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoListItem({  value }: TodoItemProps) {
+function TodoListItem({  value, status }: TodoItemProps) {
     return (
       <li className="flex">
         <span className="pr-4">
-          <TodoStatusSelect />
+                <TodoStatusSelect value={status} />
         </span>
         <ToggleableInput value={value}  />
       </li>
@@ -99,10 +100,10 @@ export function ToggleableInput({ value}: ToggleableInputProps) {
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
 }
 
-interface TodoStatusSelectProps  {}
-function TodoStatusSelect({ }: TodoStatusSelectProps) {
+interface TodoStatusSelectProps  {value: Status['value']}
+function TodoStatusSelect({value }: TodoStatusSelectProps) {
     return (
-      <select className="border-2 rounded-lg py-0.5">
+      <select className="border-2 rounded-lg py-0.5" value={value}>
         {statuses.map(status => (
           <option key={status.value} value={status.value}>
             <span>{status.icon}</span>{" "}

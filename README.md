@@ -93,3 +93,11 @@ What is state and what isn't? (This question is always relative to a given compo
     - This is because we want to be able to change todos between different lists by selecting a new status. It wouldn't be possible if the state was restricted to a specific status.
 
 
+## 4. Identify where state should live.
+
+We've actually already mostly done this. We want the state to live in the `<Tasks/>` component.
+Let's pass state all the way down from the top-level to the bottom.
+
+Another relatively easy step. 
+NOTE: 2.2 is quite a lot of work in comparison to these two — maybe we can split more of this out or introduce a little more state (e.g., a button to collapse a section)?
+
