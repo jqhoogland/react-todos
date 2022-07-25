@@ -239,8 +239,8 @@ function TaskSections() {
 
 const NavBar = () => {
   return (
-    <nav className="sticky-top bg-base-300 h-20 items-center flex justify-between pr-20">
-      <h1 className="px-8 text-lg font-bold"><code>bit-todos</code></h1>
+    <nav className="sticky-top bg-base-300 h-20 items-center flex justify-between px-8">
+      <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
       <ThemeToggle />
     </nav>
   )
