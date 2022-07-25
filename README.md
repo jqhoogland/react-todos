@@ -36,3 +36,13 @@ Goals:
 # 2. Thinking in React
 
 ## 1. Thinking in React
+> Learn the [5 steps of React](https://beta.reactjs.org/learn/thinking-in-react). (This isn't an ironclad law but still useful).
+
+Given this mockup:
+![](public/2-1.png)
+
+Goals:
+- Break this down into components. It depends how you want to break it down, but you can get something like: `<Layout/>`, `<NavBar/>`, `<TodoSection/>`, `<TodoSectionHeader/>`, `<TodoSectionBody/>`, `<TodoItem/>` 
+
+
+![](public/2-1.mov)

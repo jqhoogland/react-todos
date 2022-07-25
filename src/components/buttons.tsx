@@ -6,7 +6,7 @@ export function IconButton({ className, ...props }: IconButtonProps) {
   return (
     <button
       {...props}
-      className={"min-w-0 min-h-0 w-6 h-6 p-1" + (className ?? "")} />
+      className={"min-w-0 min-h-0 w-6 h-6 p-1 " + (className ?? "")} />
   );
 }
 

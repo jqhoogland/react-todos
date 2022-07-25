@@ -64,7 +64,7 @@ function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, on
   }
 
   return (
-    <section {...props}>
+    <section {...props} className="">
       {/* @ts-expect-error union & objects are non-transitive */}
       <TaskSectionHeader label={label} value={value} icon={icon} count={items.length} onCreateItem={handleCreateItemForSection} />
       <ul className="space-y-2 px-8">
