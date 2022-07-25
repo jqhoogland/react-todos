@@ -2,7 +2,8 @@ import { useState } from "react"
 
 interface TodoItem {
   id: number;
-  value: string
+  value: string;
+  completed: boolean;
 }
 
 export default function App() {
@@ -22,7 +23,7 @@ function TodoList({title}: TodoListProps) {
   const [todos, setTodos] = useState<TodoItem[]>([])
 
   const handleCreateItem = () => {
-    setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}` }])
+    setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}`, completed: false }])
   }
 
   return (
@@ -31,7 +32,7 @@ function TodoList({title}: TodoListProps) {
       <ul>
           {todos.map(todo => (
             <li key={todo.id}>
-              <TodoItem defaultValue={todo.value}/>
+              <TodoItem defaultValue={todo.value} completed={todo.completed} />
             </li>
           ))} 
           </ul>
@@ -42,9 +43,10 @@ function TodoList({title}: TodoListProps) {
 
 interface TodoItemProps {
   defaultValue: string
+  completed: boolean
 }
 
-function TodoItem({ defaultValue }: TodoItemProps) {
+function TodoItem({ defaultValue, completed }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [value, setValue] = useState(defaultValue)
 
@@ -62,5 +64,10 @@ function TodoItem({ defaultValue }: TodoItemProps) {
     return <input value={value} onChange={handleChange} onKeyUp={handleKeyUp} />
   }
 
-  return <span onClick={() => setIsEditing(true)}>{value}</span>
+  return (
+    <div>
+      <input type="checkbox" checked={completed} />
+      <span onClick={() => setIsEditing(true)}>{value}</span>
+    </div>
+    )
 }
