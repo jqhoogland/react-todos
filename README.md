@@ -87,7 +87,9 @@ Goals:
 
 What is state and what isn't? (This question is always relative to a given component)
 - The status inside the status select component? Nope. We want it to be passed down all the way from the top-level Tasks component.
-- The text of the todo component inside the text input? Nope. This is "controlled" also by the top-level Tasks component.
+- The text of the todo component inside the text input? Maybe, it depends. 
+    - This can be "controlled" by the top-level Tasks component.
+    - But you may not want it to "submit" until the user hits enter to confirm. That way they could hit "escape" to revert to the original state. In this case, you would need local state during editing. (actually you could get away with an uncontrolled component but that comes later)
 - Whether the todo component is editable (and displaying an input) or not (and displaying a span). Yes. This exists locally on each component.
 - The list of todo items inside the status-specific todo list? Nope. This is passed down from one higher component, a <Tasks/> component whose state contains all of the todos.
     - This is because we want to be able to change todos between different lists by selecting a new status. It wouldn't be possible if the state was restricted to a specific status.
@@ -102,3 +104,8 @@ Another relatively easy step.
 NOTE: 2.2 is quite a lot of work in comparison to these two — maybe we can split more of this out or introduce a little more state (e.g., a button to collapse a section)?
 
 ## 5. Add inverse data flow
+
+- When you select a new status, it should propagate up (and change in all other lists)
+- When you change a test
+- When you add a new todo, it should have the status of the group you added it from.
+- Todos should be filtered by status

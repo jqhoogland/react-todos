@@ -21,7 +21,7 @@ function Tasks() {
                     <TodoList
                         title={status.label}
                         status={status.value}
-                        todos={todos}
+                        todos={todos.filter(todo => todo.status === status.value)}
                         onCreateItem={handleCreateItem}
                         onUpdateItem={handleUpdateItem}
                         key={status.value}
