@@ -1,12 +1,7 @@
 import { useState } from "react"
 import { Header } from "../layout";
-
-export interface TodoItem {
-    id: number;
-    value: string;
-    completed: boolean;
-}
-
+import type { TodoItem } from "../data";
+import { Status, statuses } from "../../data";
 
 function Tasks() {
     const [todos, setTodos] = useState<TodoItem[]>([])
@@ -63,7 +58,7 @@ function TodoList({ title, todos, onCreateItem, onUpdateItem }: TodoListProps) {
             <ul className="space-y-2 px-4">
                 {todos.map(todo => (
                     <li key={todo.id}>
-                        <TodoItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
+                        <TodoListItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
                     </li>
                 ))}
             </ul>
@@ -72,36 +67,61 @@ function TodoList({ title, todos, onCreateItem, onUpdateItem }: TodoListProps) {
 }
 
 interface TodoItemProps {
+    id: TodoItem['id'];
     value: string
-    completed: boolean
+    status: Status['value'];
     onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoItem({ value, completed, onUpdateItem }: TodoItemProps) {
-    const [isEditing, setIsEditing] = useState(false)
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onUpdateItem({ value: e.target.value })
-    }
-
-    const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            setIsEditing(false)
-        }
-    }
-
-    if (isEditing) {
-        return <input value={value} onChange={handleChange} onKeyUp={handleKeyUp} />
-    }
-
-    const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onUpdateItem({ completed: e.target.checked })
-    }
-
+function TodoListItem({ id, value, status }: TodoItemProps) {
     return (
-        <div className="space-x-2">
-            <input type="checkbox" checked={completed} onChange={handleCheck} />
-            <span onClick={() => setIsEditing(true)}>{value}</span>
-        </div>
-    )
+        <li className="flex">
+        <span className="pr-4">
+          <TodoStatusSelect id={id} value={status} />
+        </span>
+        <ToggleableInput  value={value}  />
+      </li>
+    )   
 }
+
+
+interface ToggleableInputProps { value: string; }
+
+export function ToggleableInput({ value, }: ToggleableInputProps) {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleOpen = () => {
+    setIsEditing(true);
+  };
+    
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // ...
+  }
+   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setIsEditing(false)
+    }
+  }
+
+  if (isEditing) {
+      return <input className="px-2 flex border-2 rounded-lg w-full" defaultValue={value} onChange={handleChange} onKeyUp={handleKeyUp} />;
+  }
+
+  return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
+}
+
+interface TodoStatusSelectProps  {
+    value: Status['value'];
+  }
+  function TodoStatusSelect({ value }: TodoStatusSelectProps) {
+    return (
+      <select value={value} className="border-2 rounded-lg py-0.5">
+        {statuses.map(status => (
+          <option key={status.value} value={status.value}>
+            <span>{status.icon}</span>{" "}
+            {status.label}
+          </option>
+        ))}
+      </select>
+    );
+  }

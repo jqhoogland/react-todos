@@ -35,7 +35,7 @@ Goals:
 
 # 2. Thinking in React
 
-## 1. Thinking in React
+## 1. Break apart the component hierarchy
 > Learn the [5 steps of React](https://beta.reactjs.org/learn/thinking-in-react). (This isn't an ironclad law but still useful).
 
 Given this mockup:
@@ -48,10 +48,24 @@ Goals:
 ![](public/2-1.mov)
 
 
-## 2. Make it work statically
+## 2. Build a static version
 
 - Get [Tailwind up and running](https://tailwindcss.com/docs/guides/vite).
+- Split out the layouts (`<NavBar/>`, `<Layout/>`, & `<Header/>`)
 
+![](public/2-1c.png)
+
+- Change the checkbox into a status selector:
+
+```ts
+export const statuses = [
+  { label: 'In Review', value: "in_review", icon: "🙇" },
+  { label: 'In Progress', value: "in_progress", icon: "🏃" },
+  { label: 'Todo', value: "todo", icon: "📥" },
+  { label: 'Done', value: "done", icon: "☑️" },
+  { label: 'Canceled', value: "canceled", icon: "🗑" }
+];
+```
 
 Goals:
 - Learn how to break apart files into a semisensible structure. (Atomic components is overkill and bad.)
