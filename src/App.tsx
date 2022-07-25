@@ -80,18 +80,16 @@ const defaultTodos: TodoItem[] = [
 ]
 
 
-type OnCreateItem = (item: string) => void;
-interface TaskSectionProps extends HTMLProps<HTMLDivElement> {
-  label: string;
+type OnCreateItem = (item?: Partial<TodoItem>) => void;
+type TaskSectionProps = {
   items: TodoItem[];
   onCreateItem: OnCreateItem
-}
+} & HTMLProps<HTMLDivElement> & Status;
 
-interface TaskSectionHeaderProps {
-  label: string;
+type TaskSectionHeaderProps = {
   count: number;
   onCreateItem: OnCreateItem
-}
+} & Status;
 
 function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProps) {
   return (
@@ -100,7 +98,7 @@ function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProp
         <h2 className='text-xl font-bold'>{label}</h2>
         <h4>{count}</h4>
       </span>
-      <AddButton onClick={() => onCreateItem("")} />
+      <AddButton onClick={() => onCreateItem()} />
     </header>
   )
 }
@@ -241,14 +239,16 @@ function TodoListItem({ id, value, status, priority, assigned }: TodoItem) {
 }
 
 
-function TaskSection({ label, items, onCreateItem, ...props }: TaskSectionProps) {
+function TaskSection({ label, value, icon, items, onCreateItem, ...props }: TaskSectionProps) {
+  const handleCreateItemForSection = (item: Partial<TodoItem> ={}) => onCreateItem({ status: value, ...item });
+
   if (items.length === 0) {
     return <></>
   }
 
   return (
     <div {...props}>
-      <TaskSectionHeader label={label} count={items.length} onCreateItem={onCreateItem} />
+      <TaskSectionHeader label={label} value={value} icon={icon} count={items.length} onCreateItem={handleCreateItemForSection} />
       <ul className="flex flex-col divide-y divide-base-100">
         {items.map((item) => <TodoListItem {...item} key={item.id} />)}
       </ul>
@@ -279,7 +279,8 @@ function AddButton(props: IconButtonProps) {
 function TaskSections() {
   const [todos, setTodos] = useState(defaultTodos);
 
-  const handleCreateItem = (value: Partial<TodoItem>) => {
+  const handleCreateItem = (value: Partial<TodoItem> = {}) => {
+    console.log("Creating new item", value)
     setTodos([
       ...todos,
       { id: todos.length + 1, ...defaultTodoItem, ...value,}
@@ -290,10 +291,10 @@ function TaskSections() {
     <div className="">
       {statuses.map(status => (
         <TaskSection
-          label={status.label}
+          {...status}
           items={todos.filter(todo => todo.status === status.value)}
           className="flex-1"
-          onCreateItem={(value: string) => handleCreateItem({value})}
+          onCreateItem={handleCreateItem}
           key={status.label}
         />
       ))}
