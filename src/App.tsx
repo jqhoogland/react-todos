@@ -6,6 +6,16 @@ interface TodoItem {
 }
 
 export default function App() {
+  return (
+    <main>
+      <TodoList/>
+      <TodoList/>
+    </main>
+  )
+}
+
+
+function TodoList() {
   const [todos, setTodos] = useState<TodoItem[]>([])
 
   const handleCreateItem = () => {
@@ -13,15 +23,15 @@ export default function App() {
   }
 
   return (
-    <main>
-      <ul style={{border: 1, backgroundColor: "blue" }}>
-        {todos.map(todo => (
-          <li key={todo.id} className="todo-item">
-            {todo.value}
-          </li>
-        ))} 
-        </ul>
+    <>
+      <ul>
+          {todos.map(todo => (
+            <li key={todo.id}>
+              {todo.value}
+            </li>
+          ))} 
+          </ul>
       <button onClick={handleCreateItem}>Add Item</button>
-    </main>
+    </>
   )
 }

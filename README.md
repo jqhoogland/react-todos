@@ -10,3 +10,11 @@ Goals:
     - `camelCase` over `kebab-case` for attributes
 
 ![](public/1-1.mov)
+
+## 2. Let's get reactive
+> Let's make the todo items editable & deletable. Also I want several todo lists.
+
+Goals: 
+- Breaking apart components.
+- "Prop-drilling" 
+- "Conditional renders"
