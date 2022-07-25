@@ -2,11 +2,11 @@ import autoAnimate from "@formkit/auto-animate";
 import { UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
 import React, { HTMLProps, useEffect, useRef, useState } from 'react';
-import { AddButton, IconButton, IconButtonWithDropdown } from "./components/buttons";
-import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "./data";
-import { usePersistedState } from './hooks';
+import { AddButton, IconButton, IconButtonWithDropdown } from "../components/buttons";
+import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "../data";
+import { usePersistedState } from '../hooks';
 
-export default function TaskSections() {
+export default function Tasks() {
   const [todos, setTodos] = usePersistedState('todos', defaultTodos);
 
   const handleCreateItem: OnCreateItem = (value = {}) => {
@@ -25,7 +25,7 @@ export default function TaskSections() {
   };
 
   return (
-    <div className="">
+    <div>
       {statuses.map(status => (
         <TaskSection
           key={status.label}
