@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {defaultUsers, defaultTodos} from './data';
 
 export const usePersistedState = <T>(key: string, initialValue: T) => {
     const [value, setValue] = useState<T>(() => {
@@ -12,4 +13,12 @@ export const usePersistedState = <T>(key: string, initialValue: T) => {
     }
 
     return [value, setPersistedValue] as const;
+}
+
+export const useUsers = () => {
+    return usePersistedState('users', defaultUsers);
+}
+
+export const useTodos = () => {
+    return usePersistedState('todos', defaultTodos);
 }

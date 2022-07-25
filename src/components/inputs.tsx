@@ -15,6 +15,7 @@ export function ToggleableInput({ value, onChangeValue, onDelete }: ToggleableIn
       setIsEditing(false);
     } else if ((e.code === 'Backspace' || e.code === "Delete") && e.target.value === '') {
       onDelete();
+      
     }
   };
   const handleOpen = () => {

@@ -1,15 +1,15 @@
 import autoAnimate from "@formkit/auto-animate";
 import { UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
-import React, { HTMLProps, PropsWithChildren, useEffect, useRef } from 'react';
+import React, { HTMLProps, useEffect, useRef } from 'react';
 import { AddButton, IconButton, IconButtonWithDropdown } from "../components/buttons";
-import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, defaultUsers } from "../data";
-import { usePersistedState } from '../hooks';
 import { ToggleableInput } from "../components/inputs";
 import { Header } from "../components/layout";
+import { defaultTodoItem, priorities, Priority, Status, statuses, TodoItem, User } from "../data";
+import { useTodos, useUsers } from '../hooks';
 
 export default function Tasks() {
-  const [todos, setTodos] = usePersistedState('todos', defaultTodos);
+  const [todos, setTodos] = useTodos()
 
   const handleCreateItem: OnCreateItem = (value = {}) => {
     setTodos([
@@ -171,11 +171,13 @@ interface TodoAssignButtonProps extends TodoButton {
   onChangeValue: (assigned: User['id'][]) => void;
 }
 function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
+  const [users] = useUsers();
+
   const trigger = React.useMemo(() => {
     if (value.length === 0) {
       return <IconButton tabIndex={0}><UserIcon /></IconButton>;
     }
-    const assignedUsers = defaultUsers.filter(user => value.includes(user.id));
+    const assignedUsers = users.filter(user => value.includes(user.id));
 
     return (
       <button className="btn btn-ghost btn-sm p-0 avatar-group -space-x-4">
@@ -200,7 +202,7 @@ function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
         <span>Assigned</span>
       </li>
 
-      {defaultUsers.map(user => (
+      {users.map(user => (
         <li key={user.id}>
           <button className={clsx("flex items-center p-2", value.includes(user.id) && "bg-base-300")} onClick={() => handleToggle(user.id)}>
             <ProfilePicture {...user} />
