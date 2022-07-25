@@ -21,3 +21,6 @@ Goals:
 - Breaking apart components.
 - "Prop-drilling" 
 - "Conditional renders"
+
+
+![](public/1-2.mov)
