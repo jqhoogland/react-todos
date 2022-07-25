@@ -62,34 +62,30 @@ function TodoList({ title, todos, onCreateItem, onUpdateItem }: TodoListProps) {
 
 interface TodoItemProps {
     value: string
-    status: Status['value'];
     onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoListItem({  value, status }: TodoItemProps) {
+function TodoListItem({  value }: TodoItemProps) {
     return (
         <li className="flex">
         <span className="pr-4">
-          <TodoStatusSelect value={status} />
+          <TodoStatusSelect />
         </span>
-        <ToggleableInput  value={value}  />
+        <ToggleableInput value={value}  />
       </li>
     )   
 }
 
 
-interface ToggleableInputProps { value: string; }
+interface ToggleableInputProps { value: string }
 
-export function ToggleableInput({ value }: ToggleableInputProps) {
+export function ToggleableInput({ value}: ToggleableInputProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleOpen = () => {
     setIsEditing(true);
   };
     
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // ...
-  }
    const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setIsEditing(false)
@@ -97,18 +93,16 @@ export function ToggleableInput({ value }: ToggleableInputProps) {
   }
 
   if (isEditing) {
-      return <input className="px-2 flex border-2 rounded-lg w-full" defaultValue={value} onChange={handleChange} onKeyUp={handleKeyUp} />;
+      return <input className="px-2 flex border-2 rounded-lg w-full" onKeyUp={handleKeyUp} value={value} />;
   }
 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
 }
 
-interface TodoStatusSelectProps  {
-    value: Status['value'];
-  }
-  function TodoStatusSelect({ value }: TodoStatusSelectProps) {
+interface TodoStatusSelectProps  {}
+function TodoStatusSelect({ }: TodoStatusSelectProps) {
     return (
-      <select value={value} className="border-2 rounded-lg py-0.5">
+      <select className="border-2 rounded-lg py-0.5">
         {statuses.map(status => (
           <option key={status.value} value={status.value}>
             <span>{status.icon}</span>{" "}
