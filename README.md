@@ -46,3 +46,8 @@ Goals:
 
 
 ![](public/2-1.mov)
+
+
+## 2. Make it work statically
+
+- Get [Tailwind up and running](https://tailwindcss.com/docs/guides/vite).
