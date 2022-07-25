@@ -72,7 +72,7 @@ function TodoListItem({  value, status, onUpdateItem }: TodoItemProps) {
         <span className="pr-4">
                 <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({status})} />
         </span>
-        <ToggleableInput value={value}  />
+        <ToggleableInput value={value} onChangeValue={value => onUpdateItem({value})} />
       </li>
     )   
 }
@@ -80,21 +80,25 @@ function TodoListItem({  value, status, onUpdateItem }: TodoItemProps) {
 
 interface ToggleableInputProps { value: string, onChangeValue: (value: string) => void }
 
-export function ToggleableInput({ value}: ToggleableInputProps) {
+export function ToggleableInput({ value, onChangeValue}: ToggleableInputProps) {
   const [isEditing, setIsEditing] = useState(false);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeValue(e.target.value)
+  }
+    
   const handleOpen = () => {
     setIsEditing(true);
   };
     
-   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setIsEditing(false)
     }
   }
 
   if (isEditing) {
-      return <input className="px-2 flex border-2 rounded-lg w-full" onKeyUp={handleKeyUp} value={value} />;
+      return <input className="px-2 flex border-2 rounded-lg w-full" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
   }
 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
