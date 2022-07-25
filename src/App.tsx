@@ -8,14 +8,17 @@ interface TodoItem {
 export default function App() {
   return (
     <main>
-      <TodoList/>
-      <TodoList/>
+      <TodoList title="Todos" />
+      <TodoList title="Completed"/>
     </main>
   )
 }
 
+interface TodoListProps {
+  title: string
+}
 
-function TodoList() {
+function TodoList({title}: TodoListProps) {
   const [todos, setTodos] = useState<TodoItem[]>([])
 
   const handleCreateItem = () => {
@@ -23,7 +26,8 @@ function TodoList() {
   }
 
   return (
-    <>
+    <section>
+      <h1>{title}</h1>
       <ul>
           {todos.map(todo => (
             <li key={todo.id}>
@@ -32,7 +36,7 @@ function TodoList() {
           ))} 
           </ul>
       <button onClick={handleCreateItem}>Add Item</button>
-    </>
+    </section>
   )
 }
 
