@@ -51,3 +51,9 @@ Goals:
 ## 2. Make it work statically
 
 - Get [Tailwind up and running](https://tailwindcss.com/docs/guides/vite).
+
+
+Goals:
+- Learn how to break apart files into a semisensible structure. (Atomic components is overkill and bad.)
+    - https://www.joshwcomeau.com/react/file-structure/
+    - https://www.youtube.com/watch?v=86i8ZODqMlI
