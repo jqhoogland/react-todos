@@ -9,21 +9,22 @@ interface TodoItem {
 export default function App() {
   return (
     <main>
-      <TodoList title="Todos" />
-      <TodoList title="Completed"/>
+      <TodoList title="Todos" completed={false} />
+      <TodoList title="Completed" completed={true} />
     </main>
   )
 }
 
 interface TodoListProps {
   title: string
+  completed: boolean
 }
 
-function TodoList({title}: TodoListProps) {
+function TodoList({title, completed}: TodoListProps) {
   const [todos, setTodos] = useState<TodoItem[]>([])
 
   const handleCreateItem = () => {
-    setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}`, completed: false }])
+    setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}`, completed }])
   }
 
   return (
