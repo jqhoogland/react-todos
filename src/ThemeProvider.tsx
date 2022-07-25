@@ -1,27 +1,45 @@
+import clsx from "clsx";
 import React, { PropsWithChildren, useState, createContext, useContext } from "react";
 
-export type Mode = "light" | "dark";
+type Theme = [
+    boolean,
+    React.Dispatch<React.SetStateAction<boolean>>
+]
 
-export const ThemeContext = createContext({ mode: "light", isDarkMode: false, setMode: (mode: Mode) => { }, toggleMode: () => { } });
-export const useTheme = () => useContext(ThemeContext)
+export const ThemeContext = createContext<Theme>([false, () => { }]);
 
 const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-    const [mode, setMode] = useState<Mode>("light");
-    const toggleMode = React.useCallback(() => setMode(mode === "light" ? "dark" : "light"), [setMode]);
-    const isDarkMode = mode === "dark";
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    React.useEffect(() => {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setIsDarkMode(true);
+        }
+    }, [])
 
     return (
-        <ThemeContext.Provider value={{ mode, isDarkMode, setMode, toggleMode }}>
-            {children}
+        <ThemeContext.Provider value={[isDarkMode, setIsDarkMode]}>
+            <div data-theme={isDarkMode ? "dark" : "light"} className="w-full h-full min-h-screen">
+                {children}
+            </div>
         </ThemeContext.Provider>
-
     )
 }
 
 export default ThemeProvider;
 
+export const useTheme = () => useContext(ThemeContext);
+
 export const ThemeToggle = () => {
-    const { isDarkMode, toggleMode } = useTheme();
-    return <input type="checkbox" className="toggle" checked={isDarkMode} onChange={toggleMode} />
+    const [isDarkMode, setIsDarkMode] = useTheme();
+    console.log({isDarkMode, setIsDarkMode})
+    return (
+        <input
+            type="checkbox"
+            className={"toggle bg-yellow-400"}
+            checked={isDarkMode} 
+            onChange={(e) =>  setIsDarkMode(e.target.checked)}
+        />
+    )
 }
 

@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import { ChangeEventHandler, HTMLProps, useState } from 'react'
-import { ThemeToggle, useTheme } from './ThemeProvider';
+import ThemeProvider, { ThemeToggle, useTheme } from './ThemeProvider';
 
 interface TodoItem {
   id: number;
@@ -127,7 +127,6 @@ function KanbanColumn({ status, items, onCreateItem, ...props }: KanbanColumnPro
 function IconButton({ children = '+', ...props }: HTMLProps<HTMLButtonElement>) {
   return (
     <button
-
       {...props}
       className="hover:bg-stone-200 active:bg-stone-300 text-gray-500 rounded-sm w-[13px] h-[13px] leading-[0] pb-[0.2rem]"
     >
@@ -172,10 +171,8 @@ function Kanban() {
 }
 
 const NavBar = () => {
-  const { isDarkMode, toggleMode} = useTheme();
-
   return (
-    <nav className="sticky-top bg-stone-300 h-20 flex items-center flex justify-between pr-20">
+    <nav className="sticky-top bg-base-300 h-20 flex items-center flex justify-between pr-20">
       <h1 className="px-8 text-lg font-bold"><code>bit-todos</code></h1>
       <ThemeToggle />
     </nav>
@@ -183,12 +180,12 @@ const NavBar = () => {
 }
 function App() {
   return (
-    <div>
-      <NavBar />
-      <main className="max-w-screen-md p-8 mx-auto">
-        <Kanban />
-      </main>
-    </div>
+    <ThemeProvider>
+        <NavBar />
+        <main className="max-w-screen-md p-8 mx-auto">
+          <Kanban />
+        </main>
+    </ThemeProvider>
   )
 }
 
