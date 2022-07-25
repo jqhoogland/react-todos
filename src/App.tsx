@@ -1,12 +1,12 @@
 import autoAnimate from "@formkit/auto-animate";
 import { UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
-import React, { HTMLProps, PropsWithChildren, useEffect, useRef, useState } from 'react';
-import { usePersistedState } from './hooks';
+import React, { HTMLProps, useEffect, useRef, useState } from 'react';
 import { AddButton, IconButton, IconButtonWithDropdown } from "./components/buttons";
-import ThemeProvider, { ThemeToggle } from './components/ThemeProvider';
-import { TodoItem, Status, statuses, Priority, priorities, User, users, defaultTodos, defaultTodoItem } from "./data";
 import { Layout } from "./components/layout";
+import ThemeProvider from './components/ThemeProvider';
+import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "./data";
+import { usePersistedState } from './hooks';
 
 function App() {
   return (
@@ -104,7 +104,7 @@ type TaskSectionHeaderProps = {
 
 function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProps) {
   return (
-    <header className="flex items-center gap-2 px-4 py-2 bg-base-100 justify-between">
+    <header className="flex items-center gap-2 px-4 py-2 bg-base-100 justify-between sticky top-20 z-10">
       <span className="flex gap-2 items-baseline">
         <h2 className='text-xl font-bold'>{label}</h2>
         <h4>{count}</h4>
