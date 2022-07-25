@@ -35,7 +35,7 @@ export function ToggleableInput({ value, onChangeValue, onDelete }: ToggleableIn
   }, [isEditing]);
 
   if (isEditing) {
-    return <input ref={ref} className="input input-bordered input-sm w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />;
+    return <input ref={ref} className="px-2 flex border-2 rounded-lg w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />;
   }
 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
