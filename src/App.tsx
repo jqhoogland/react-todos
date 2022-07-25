@@ -10,8 +10,12 @@ interface TodoItem {
 export default function App() {
   const [todos, setTodos] = useState<TodoItem[]>([])
 
-  const handleCreateItem: OnCreateItem = (item = {s}) => {
+  const handleCreateItem: OnCreateItem = (item = {}) => {
     setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}`, completed: false, ...item }])
+  }
+
+  const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
+    setTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
   }
 
   const newTodos = todos.filter(todo => !todo.completed);
@@ -23,25 +27,29 @@ export default function App() {
         title="Todos"
         todos={newTodos}
         onCreateItem={() => handleCreateItem({ completed: false })}
+        onUpdateItem={handleUpdateItem}
       />
       <TodoList
         title="Completed"
         todos={completedTodos}
         onCreateItem={() => handleCreateItem({ completed: true })}
+        onUpdateItem={handleUpdateItem}
       />
     </main>
   )
 }
 
 type OnCreateItem = (item?: Partial<TodoItem>) => void
+type OnUpdateItem = (id: TodoItem['id'], item?: Partial<TodoItem>) => void;
 
 interface TodoListProps {
   todos: TodoItem[];
   title: string
   onCreateItem: OnCreateItem
+  onUpdateItem: OnUpdateItem
 }
 
-function TodoList({title, todos, onCreateItem}: TodoListProps) {
+function TodoList({title, todos, onCreateItem, onUpdateItem}: TodoListProps) {
 
   return (
     <section>
@@ -49,7 +57,7 @@ function TodoList({title, todos, onCreateItem}: TodoListProps) {
       <ul>
         {todos.map(todo => (
           <li key={todo.id}>
-            <TodoItem defaultValue={todo.value} defaultCompleted={todo.completed} />
+            <TodoItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
           </li>
         ))} 
       </ul>
@@ -59,17 +67,16 @@ function TodoList({title, todos, onCreateItem}: TodoListProps) {
 }
 
 interface TodoItemProps {
-  defaultValue: string
-  defaultCompleted: boolean
+  value: string
+  completed: boolean
+  onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoItem({ defaultValue, defaultCompleted }: TodoItemProps) {
+function TodoItem({ value, completed, onUpdateItem }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false)
-  const [value, setValue] = useState(defaultValue)
-  const [completed, setCompleted] = useState(defaultCompleted)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value)
+    onUpdateItem({ value: e.target.value })
   }
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -83,7 +90,7 @@ function TodoItem({ defaultValue, defaultCompleted }: TodoItemProps) {
   }
 
   const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCompleted(true)
+    onUpdateItem({ completed: e.target.checked })
   }
 
   return (
