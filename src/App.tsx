@@ -32,7 +32,7 @@ function TodoList({title}: TodoListProps) {
       <ul>
           {todos.map(todo => (
             <li key={todo.id}>
-              <TodoItem defaultValue={todo.value} completed={todo.completed} />
+              <TodoItem defaultValue={todo.value} defaultCompleted={todo.completed} />
             </li>
           ))} 
           </ul>
@@ -43,12 +43,13 @@ function TodoList({title}: TodoListProps) {
 
 interface TodoItemProps {
   defaultValue: string
-  completed: boolean
+  defaultCompleted: boolean
 }
 
-function TodoItem({ defaultValue, completed }: TodoItemProps) {
+function TodoItem({ defaultValue, defaultCompleted }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [value, setValue] = useState(defaultValue)
+  const [completed, setCompleted] = useState(defaultCompleted)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value)
@@ -64,9 +65,13 @@ function TodoItem({ defaultValue, completed }: TodoItemProps) {
     return <input value={value} onChange={handleChange} onKeyUp={handleKeyUp} />
   }
 
+  const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCompleted(true)
+  }
+
   return (
     <div>
-      <input type="checkbox" checked={completed} />
+      <input type="checkbox" checked={completed} onChange={handleCheck} />
       <span onClick={() => setIsEditing(true)}>{value}</span>
     </div>
     )
