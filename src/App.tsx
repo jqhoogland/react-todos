@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { TodoItem } from './data';
 
 interface TodoItem {
   id: number;
@@ -27,11 +28,19 @@ function TodoList() {
       <ul>
           {todos.map(todo => (
             <li key={todo.id}>
-              {todo.value}
+              <TodoItem value={todo.value}/>
             </li>
           ))} 
           </ul>
       <button onClick={handleCreateItem}>Add Item</button>
     </>
   )
+}
+
+interface TodoItemProps {
+  value: string
+}
+
+function TodoItem({value}: TodoItemProps) {
+  return <span>{value}</span>
 }

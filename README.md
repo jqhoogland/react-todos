@@ -14,6 +14,9 @@ Goals:
 ## 2. Let's get reactive
 > Let's make the todo items editable & deletable. Also I want several todo lists.
 
+1. Extract a `<TodoList/>` component (with local state) & put two of them next to each other on the home page.
+
+
 Goals: 
 - Breaking apart components.
 - "Prop-drilling" 
