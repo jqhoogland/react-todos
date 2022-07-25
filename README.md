@@ -1,4 +1,7 @@
-# React Kanban
+# Bit todos
+A Linear clone to serve as an introduction to React.
+
+### Where to learn what
 
 ### Set-up
 
