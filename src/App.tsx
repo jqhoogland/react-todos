@@ -106,13 +106,13 @@ function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProp
 }
 
 interface IconButtonWithDropdownProps extends HTMLProps<HTMLDivElement> {
-  icon: React.ReactNode,
+  trigger: React.ReactNode,
 }
 
-function IconButtonWithDropdown({ children, icon, ...props }: IconButtonWithDropdownProps) {
+function IconButtonWithDropdown({ children, trigger, ...props }: IconButtonWithDropdownProps) {
   return (
     <div {...props} className={clsx("dropdown", props?.className)}>
-      <IconButton tabIndex={0}>{icon}</IconButton>
+      {trigger}
       <ul tabIndex={0} className="dropdown-content menu p-2 bg-base-100 rounded-box w-52 opacity-100 hover:opacity-100 border-2 border-base-300 shadow-lg">
         {children}
       </ul>
@@ -130,7 +130,7 @@ interface TodoStatusButtonProps extends TodoButton {
 
 function TodoStatusButton({ id, value }: TodoStatusButtonProps) {
   return (
-    <IconButtonWithDropdown icon={<div className="checkbox checkbox-xs" />}>
+    <IconButtonWithDropdown trigger={<IconButton tabIndex={0}><div className="checkbox checkbox-xs" /></IconButton>}>
       <li className="menu-title pt-2">
         <span>Status</span>
       </li>
@@ -157,7 +157,7 @@ function TodoPriorityButton({ id, value }: TodoPriorityButtonProps) {
   }, [value])
 
   return (
-    <IconButtonWithDropdown icon={icon}>
+    <IconButtonWithDropdown trigger={<IconButton tabIndex={0}>{icon}</IconButton>}>
       <li className="menu-title pt-2">
         <span>Priority</span>
       </li>
@@ -178,12 +178,12 @@ interface TodoAssignButtonProps extends TodoButton {
   value: User['id'][];
 }
 
-function ProfilePicture({ id, name }: User) {
+function ProfilePicture({ id, name, className="w-6 h-6"}: User & Omit<HTMLProps<HTMLDivElement>, "id">) {
   const initials = name.split(' ').map(s => s[0]).join('').toUpperCase();
 
   return (
-    <div className="rounded-full w-6 h-6 bg-rose-200 text-xs text-slate-800 pt-1">
-      {initials}
+    <div className={clsx("avatar rounded-full bg-rose-200 text-xs text-slate-800 flex place-items-center", className)}>
+      <span className='w-full text-center'>{initials}</span>
     </div>
   )
 }
@@ -192,8 +192,24 @@ function ProfilePicture({ id, name }: User) {
 function TodoAssignButton({ value }: TodoAssignButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const trigger = React.useMemo(() => {
+    if (value.length === 0) {
+      return <IconButton tabIndex={0}><UserIcon /></IconButton>
+    }
+    const assignedUsers = users.filter(user => value.includes(user.id))
+
+    return (
+      <button className="btn btn-ghost btn-sm p-0 avatar-group -space-x-4">
+        {assignedUsers.map(user => (
+          <ProfilePicture key={user.id} {...user} className="w-8 h-8"/>
+        ))}
+      </button>
+    )
+
+  }, [value])
+  
   return (
-    <IconButtonWithDropdown icon={<UserIcon/>} className="dropdown-bottom dropdown-end">
+    <IconButtonWithDropdown trigger={trigger} className="dropdown-bottom dropdown-end">
       <li className="menu-title pt-2">
         <span>Assigned</span>
       </li>
