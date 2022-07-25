@@ -2,6 +2,13 @@
 A Linear clone to serve as an introduction to React.
 
 ### Where to learn what
+- Basics:
+  - Turn DaisyUI components into React elements.
+     - Goal: `class -> className`, `attribute="" -> attribute={}`, `my-attribute -> myAttribute`
+  - Given the finished product, draw out the elements that it consists of.
+    
+
+
 - Context. Used to make the theme globally accessible (for the toggle theme button in the navbar). 
 - Custom hooks: `usePersistedState`. Used in order to persist a user's theme & todos across refreshes
 - Prop-drilling: all over the place

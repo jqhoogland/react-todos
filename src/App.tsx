@@ -1,79 +1,60 @@
 import autoAnimate from "@formkit/auto-animate";
-import { PlusIcon, UserIcon } from "@heroicons/react/solid";
+import { UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
-import React, { HTMLProps, useEffect, useRef, useState } from 'react';
+import React, { HTMLProps, PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { usePersistedState } from './hooks';
-import ThemeProvider, { ThemeToggle } from './ThemeProvider';
+import { AddButton, IconButton, IconButtonWithDropdown } from "./components/buttons";
+import ThemeProvider, { ThemeToggle } from './components/ThemeProvider';
+import { TodoItem, Status, statuses, Priority, priorities, User, users, defaultTodos, defaultTodoItem } from "./data";
+import { Layout } from "./components/layout";
 
-const statuses = [
-  { label: 'In Review', value: "in_review", icon: "🙇" },
-  { label: 'In Progress', value: "in_progress", icon: "🏃" },
-  { label: 'Todo', value: "todo", icon: "📥" },
-  { label: 'Done', value: "done", icon: "☑️" },
-  { label: 'Canceled', value: "canceled", icon: "🗑" }
-] as const
-
-type Status = typeof statuses[number];
-
-const priorities = [
-  { label: 'Urgent', value: 5, icon:"🔥" },
-  { label: 'High', value: 4, icon: "🟧"},
-  { label: 'Medium', value: 3 , icon: "🟨"},
-  { label: 'Low', value: 2, icon: "🟩" },
-  { label: 'None', value: 1, icon:"⬜️" },
-] as const
-
-type Priority = typeof priorities[number];
-
-const users = [
-  { name: "John Doe", id: 0 },
-  { name: "Jane Doe", id: 1 },
-]
-  
-type User = typeof users[number];
-type UserName = User['name'];
-
-
-interface TodoItem {
-  id: number;
-  value: string;
-  completed: boolean;
-  status: Status['value'];
-  priority: Priority['value'];
-  assigned: User['id'][]
+function App() {
+  return (
+    <ThemeProvider>
+      <Layout>
+        <TaskSections />
+      </Layout>
+    </ThemeProvider>
+  )
 }
 
-const defaultTodoItem: Omit<TodoItem, "id"> = {
-  value: "",
-  completed: false,
-  status: 'todo',
-  priority: 1,
-  assigned: []
+export default App
+
+
+function TaskSections() {
+  const [todos, setTodos] = usePersistedState('todos', defaultTodos);
+
+  const handleCreateItem: OnCreateItem = (value= {}) => {
+    setTodos([
+      ...todos,
+      { id: todos.length + 1, ...defaultTodoItem, ...value,}
+    ]);
+  }
+
+  const handleChangeItem: OnChangeItem = ({id, ...value}) => {
+    setTodos(todos.map(todo => todo.id !== id ? todo : {...todo, ...value}))
+  }
+
+  const handleDeleteItem: OnDeleteItem = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id))
+  }
+
+  return (
+    <div className="">
+      {statuses.map(status => (
+        <TaskSection
+          key={status.label}
+          {...status}
+          items={todos.filter(todo => todo.status === status.value)}
+          className="flex-1"
+          onCreateItem={handleCreateItem}
+          onChangeItem={handleChangeItem}
+          onDeleteItem={handleDeleteItem}
+        />
+      ))}
+    </div >
+  )
 }
-
-const defaultTodos: TodoItem[] = [
-  { id: 0, priority: 5, value: 'Learn JavaScript', completed: false, assigned: [], status: "done" },
-  { id: 1, priority: 5, value: 'Learn React', completed: false, assigned: [], status: "in_progress" },
-  { id: 2, priority: 4, value: 'Learn TypeScript', completed: false, assigned: [], status: "in_progress" },
-  { id: 3, priority: 1, value: 'Learn React Native', completed: false, assigned: [], status: "todo" },
-  { id: 4, priority: 1, value: 'Learn GraphQL', completed: false, assigned: [], status: "todo" },
-  { id: 5, priority: 3, value: 'Learn Next.js', completed: false, assigned: [], status: "todo" },
-  { id: 6, priority: 1, value: 'Learn Node.js', completed: false, assigned: [], status: "todo" },
-  { id: 7, priority: 1, value: 'Learn MongoDB', completed: false, assigned: [], status: "todo" },
-  { id: 8, priority: 1, value: 'Learn SQL', completed: false, assigned: [], status: "todo" },
-  { id: 9, priority: 1, value: 'Learn Python', completed: false, assigned: [], status: "in_progress" },
-  { id: 10, priority: 1, value: 'Learn Java', completed: false, assigned: [], status: "in_progress" },
-  { id: 11, priority: 1, value: 'Learn C++', completed: false, assigned: [], status: "in_progress" },
-  { id: 12, priority: 1, value: 'Learn C#', completed: false, assigned: [], status: "todo" },
-  { id: 13, priority: 1, value: 'Learn Go', completed: false, assigned: [], status: "todo" },
-  { id: 14, priority: 1, value: 'Learn Rust', completed: false, assigned: [], status: "todo" },
-  { id: 15, priority: 1, value: 'Learn Kotlin', completed: false, assigned: [], status: "todo" },
-  { id: 16, priority: 1, value: 'Learn Swift', completed: false, assigned: [], status: "todo" },
-  { id: 17, priority: 1, value: 'Learn Elixir', completed: false, assigned: [], status: "todo" },
-  { id: 18, priority: 1, value: 'Learn Ruby', completed: false, assigned: [], status: "todo" },
-  { id: 19, priority: 1, value: 'Learn PHP', completed: false, assigned: [], status: "todo" },
-]
-
 
 type OnCreateItem = (item?: Partial<TodoItem>) => void;
 type OnChangeItem = (item: Omit<Partial<TodoItem>, 'id'> & { id: TodoItem['id'] }) => void;
@@ -85,6 +66,36 @@ type TaskSectionProps = {
   onChangeItem: OnChangeItem;
   onDeleteItem: OnDeleteItem;
 } & HTMLProps<HTMLDivElement> & Status;
+
+function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, onDeleteItem, ...props }: TaskSectionProps) {
+  const parentRef = useRef<HTMLOListElement | null>(null);
+  const handleCreateItemForSection = (item: Partial<TodoItem> ={}) => onCreateItem({ status: value, ...item });
+
+  useEffect(() => {
+    if (parentRef.current) {
+      autoAnimate(parentRef.current)
+    } 
+  }, [parent])
+
+  const orderedItems = React.useMemo(() => {
+    return items.sort((a, b) => b.priority - a.priority)
+  }, [items])
+
+  if (items.length === 0) {
+    return <></>
+  }
+
+  return (
+    <section {...props}>
+      {/* @ts-expect-error union & objects are non-transitive */}
+      <TaskSectionHeader label={label} value={value} icon={icon} count={items.length} onCreateItem={handleCreateItemForSection} />
+      <ul className="flex flex-col divide-y divide-base-100" ref={parentRef}>
+        {orderedItems.map((item) => <TodoListItem {...item} key={item.id} onChangeItem={onChangeItem} onDeleteItem={onDeleteItem} />)}
+      </ul>
+    </section>
+  )
+}
+
 
 type TaskSectionHeaderProps = {
   count: number;
@@ -103,18 +114,16 @@ function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProp
   )
 }
 
-interface IconButtonWithDropdownProps extends HTMLProps<HTMLDivElement> {
-  trigger: React.ReactNode,
-}
-
-function IconButtonWithDropdown({ children, trigger, ...props }: IconButtonWithDropdownProps) {
+function TodoListItem({ id, value, status, priority, assigned, onChangeItem, onDeleteItem }: TodoItem & { onChangeItem : OnChangeItem, onDeleteItem: OnDeleteItem}) {
   return (
-    <div {...props} className={clsx("dropdown", props?.className)}>
-      {trigger}
-      <ul tabIndex={0} className="dropdown-content menu p-2 bg-base-100 rounded-box w-52 opacity-100 hover:opacity-100 border-2 border-base-300 shadow-lg">
-        {children}
-      </ul>
-    </div>  
+    <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100 items-baseline">
+      <span className="flex flex-row items-baseline gap-2 flex-1">
+        <div className="top-1 relative"><TodoStatusButton id={id} value={status} onChangeValue={(status) => onChangeItem({ id, status })} /></div>
+        <TodoPriorityButton id={id} value={priority} onChangeValue={(priority) => onChangeItem({ id, priority })} />
+        <EditableValue onChangeValue={(value) => onChangeItem({ id, value })} value={value} onDelete={() => onDeleteItem(id)} />
+      </span>
+      <TodoAssignButton id={id} value={assigned} onChangeValue={(assigned) => onChangeItem({ id, assigned })} />
+    </li>
   )
 }
 
@@ -183,7 +192,6 @@ function ProfilePicture({ id, name, className="w-6 h-6"}: User & Omit<HTMLProps<
     </div>
   )
 }
-
 
 interface TodoAssignButtonProps extends TodoButton {
   value: User['id'][];
@@ -272,121 +280,3 @@ function EditableValue({ value, onChangeValue, onDelete }: EditableViewProps) {
 return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>
 }
 
-function TodoListItem({ id, value, status, priority, assigned, onChangeItem, onDeleteItem }: TodoItem & { onChangeItem : OnChangeItem, onDeleteItem: OnDeleteItem}) {
-  return (
-    <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100 items-baseline">
-      <span className="flex flex-row items-baseline gap-2 flex-1">
-        <div className="top-1 relative"><TodoStatusButton id={id} value={status} onChangeValue={(status) => onChangeItem({ id, status })} /></div>
-        <TodoPriorityButton id={id} value={priority} onChangeValue={(priority) => onChangeItem({ id, priority })} />
-        <EditableValue onChangeValue={(value) => onChangeItem({ id, value })} value={value} onDelete={() => onDeleteItem(id)} />
-      </span>
-      <TodoAssignButton id={id} value={assigned} onChangeValue={(assigned) => onChangeItem({ id, assigned })} />
-    </li>
-  )
-}
-
-
-function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, onDeleteItem, ...props }: TaskSectionProps) {
-  const parentRef = useRef<HTMLOListElement | null>(null);
-  const handleCreateItemForSection = (item: Partial<TodoItem> ={}) => onCreateItem({ status: value, ...item });
-
-  useEffect(() => {
-    if (parentRef.current) {
-      autoAnimate(parentRef.current)
-    } 
-  }, [parent])
-
-  const orderedItems = React.useMemo(() => {
-    return items.sort((a, b) => b.priority - a.priority)
-  }, [items])
-
-  if (items.length === 0) {
-    return <></>
-  }
-
-  return (
-    <div {...props}>
-      {/* @ts-expect-error union & objects are non-transitive */}
-      <TaskSectionHeader label={label} value={value} icon={icon} count={items.length} onCreateItem={handleCreateItemForSection} />
-      <ul className="flex flex-col divide-y divide-base-100" ref={parentRef}>
-        {orderedItems.map((item) => <TodoListItem {...item} key={item.id} onChangeItem={onChangeItem} onDeleteItem={onDeleteItem} />)}
-      </ul>
-    </div>
-  )
-}
-
-type IconButtonProps = Omit<HTMLProps<HTMLButtonElement>, 'type'> & { Component?: string | React.ComponentType<Omit<IconButtonProps, "Component">>}
-
-function IconButton({ className, ...props }: IconButtonProps) {
-  return (
-    <button
-      {...props}
-      className={clsx("btn btn-xs btn-ghost min-w-0 min-h-0 w-6 h-6 p-1", className)}
-    />
-  )
-}
-
-function AddButton(props: IconButtonProps) {
-  return (
-    <IconButton {...props}>
-      <PlusIcon className="text-slate-100 h-4 w-4" />
-    </IconButton>
-  )
-}
-
-
-function TaskSections() {
-  const [todos, setTodos] = usePersistedState('todos', defaultTodos);
-
-  const handleCreateItem: OnCreateItem = (value= {}) => {
-    setTodos([
-      ...todos,
-      { id: todos.length + 1, ...defaultTodoItem, ...value,}
-    ]);
-  }
-
-  const handleChangeItem: OnChangeItem = ({id, ...value}) => {
-    setTodos(todos.map(todo => todo.id !== id ? todo : {...todo, ...value}))
-  }
-
-  const handleDeleteItem: OnDeleteItem = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id))
-  }
-
-  return (
-    <div className="">
-      {statuses.map(status => (
-        <TaskSection
-          key={status.label}
-          {...status}
-          items={todos.filter(todo => todo.status === status.value)}
-          className="flex-1"
-          onCreateItem={handleCreateItem}
-          onChangeItem={handleChangeItem}
-          onDeleteItem={handleDeleteItem}
-        />
-      ))}
-    </div >
-  )
-}
-
-const NavBar = () => {
-  return (
-    <nav className="fixed w-full bg-base-300 h-20 items-center flex justify-between px-8 z-50">
-      <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
-      <ThemeToggle />
-    </nav>
-  )
-}
-function App() {
-  return (
-    <ThemeProvider>
-      <NavBar />
-      <main className="bg-base-200 min-h-screen h-full pt-20">
-        <TaskSections />
-      </main>
-    </ThemeProvider>
-  )
-}
-
-export default App

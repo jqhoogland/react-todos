@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React, { PropsWithChildren, useState, createContext, useContext } from "react";
-import { usePersistedState } from "./hooks";
+import { usePersistedState } from "../hooks";
 
 type Theme = [
     boolean,
