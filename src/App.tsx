@@ -252,8 +252,6 @@ function EditableValue({ value, onChangeValue, onDelete }: EditableViewProps) {
   }
   const handleOpen = () => {
     setIsEditing(true)
-    flushSync(() => null)
-    ref.current?.focus?.()
   }
 
   React.useEffect(() => {
@@ -262,6 +260,11 @@ function EditableValue({ value, onChangeValue, onDelete }: EditableViewProps) {
     }
   }, [value])
 
+  React.useEffect(() => {
+    if (isEditing) {
+      ref.current?.focus()
+    }
+  }, [isEditing])
 
   if (isEditing) {
     return <input ref={ref} className="input input-bordered input-sm w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />
@@ -326,7 +329,6 @@ function TaskSections() {
   const [todos, setTodos] = usePersistedState('todos', defaultTodos);
 
   const handleCreateItem: OnCreateItem = (value= {}) => {
-    console.log("Creating new item", value)
     setTodos([
       ...todos,
       { id: todos.length + 1, ...defaultTodoItem, ...value,}
