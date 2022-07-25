@@ -101,3 +101,4 @@ Let's pass state all the way down from the top-level to the bottom.
 Another relatively easy step. 
 NOTE: 2.2 is quite a lot of work in comparison to these two — maybe we can split more of this out or introduce a little more state (e.g., a button to collapse a section)?
 
+## 5. Add inverse data flow

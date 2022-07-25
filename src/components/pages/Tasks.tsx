@@ -66,11 +66,11 @@ interface TodoItemProps {
     onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoListItem({  value, status }: TodoItemProps) {
+function TodoListItem({  value, status, onUpdateItem }: TodoItemProps) {
     return (
       <li className="flex">
         <span className="pr-4">
-                <TodoStatusSelect value={status} />
+                <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({status})} />
         </span>
         <ToggleableInput value={value}  />
       </li>
@@ -78,7 +78,7 @@ function TodoListItem({  value, status }: TodoItemProps) {
 }
 
 
-interface ToggleableInputProps { value: string }
+interface ToggleableInputProps { value: string, onChangeValue: (value: string) => void }
 
 export function ToggleableInput({ value}: ToggleableInputProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -100,10 +100,14 @@ export function ToggleableInput({ value}: ToggleableInputProps) {
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
 }
 
-interface TodoStatusSelectProps  {value: Status['value']}
-function TodoStatusSelect({value }: TodoStatusSelectProps) {
+interface TodoStatusSelectProps  {value: Status['value'], onChangeValue: (value: Status['value']) => void}
+function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        onChangeValue(e.target.value as Status['value'])
+    }
+
     return (
-      <select className="border-2 rounded-lg py-0.5" value={value}>
+        <select className="border-2 rounded-lg py-0.5" value={value} onChange={ handleChange}>
         {statuses.map(status => (
           <option key={status.value} value={status.value}>
             <span>{status.icon}</span>{" "}
