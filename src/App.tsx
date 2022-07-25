@@ -1,9 +1,10 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useRef } from 'react';
 import { ChangeEventHandler, HTMLProps, useState } from 'react'
 import ThemeProvider, { ThemeToggle, useTheme } from './ThemeProvider';
 import { PlusIcon, UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
 import { usePersistedState } from './hooks';
+import { flushSync } from 'react-dom';
 
 const statuses = [
   { label: 'In Review', value: "in_review", icon: "🙇" },
@@ -77,11 +78,13 @@ const defaultTodos: TodoItem[] = [
 
 type OnCreateItem = (item?: Partial<TodoItem>) => void;
 type OnChangeItem = (item: Omit<Partial<TodoItem>, 'id'> & { id: TodoItem['id'] }) => void;
+type OnDeleteItem = (id: TodoItem['id']) => void;
 
 type TaskSectionProps = {
   items: TodoItem[];
   onCreateItem: OnCreateItem;
   onChangeItem: OnChangeItem;
+  onDeleteItem: OnDeleteItem;
 } & HTMLProps<HTMLDivElement> & Status;
 
 type TaskSectionHeaderProps = {
@@ -189,8 +192,6 @@ interface TodoAssignButtonProps extends TodoButton {
 }
 
 function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
   const trigger = React.useMemo(() => {
     if (value.length === 0) {
       return <IconButton tabIndex={0}><UserIcon /></IconButton>
@@ -232,7 +233,10 @@ function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
   )
 }
 
-function EditableValue({ value, onChangeValue }: { value: string, onChangeValue: (value: string) => void }) {
+interface EditableViewProps  { value: string, onChangeValue: (value: string) => void , onDelete: () => void}
+
+function EditableValue({ value, onChangeValue, onDelete }: EditableViewProps) {
+  const ref = useRef<HTMLInputElement | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -242,23 +246,37 @@ function EditableValue({ value, onChangeValue }: { value: string, onChangeValue:
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code === 'Enter' || e.code === 'Escape') {
       setIsEditing(false)
+    } else if ((e.code === 'Backspace' || e.code === "Delete") && e.target.value === '') {
+      onDelete()
     }
   }
-
-  if (isEditing) {
-    return <input className="input input-bordered input-sm w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />
+  const handleOpen = () => {
+    setIsEditing(true)
+    flushSync(() => null)
+    ref.current?.focus?.()
   }
 
-return <span className="w-full h-full min-h-6" onClick={() => setIsEditing(true)}>{value}</span>
+  React.useEffect(() => {
+    if (value === "") {
+      handleOpen()
+    }
+  }, [value])
+
+
+  if (isEditing) {
+    return <input ref={ref} className="input input-bordered input-sm w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />
+  }
+
+return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>
 }
 
-function TodoListItem({ id, value, status, priority, assigned, onChangeItem }: TodoItem & { onChangeItem : OnChangeItem}) {
+function TodoListItem({ id, value, status, priority, assigned, onChangeItem, onDeleteItem }: TodoItem & { onChangeItem : OnChangeItem, onDelete: OnDeleteItem}) {
   return (
     <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100 items-baseline">
       <span className="flex flex-row items-baseline gap-2 flex-1">
         <div className="top-1 relative"><TodoStatusButton id={id} value={status} onChangeValue={(status) => onChangeItem({ id, status })} /></div>
         <TodoPriorityButton id={id} value={priority} onChangeValue={(priority) => onChangeItem({ id, priority })} />
-        <EditableValue onChangeValue={(value) => onChangeItem({ id, value })} value={value}/>
+        <EditableValue onChangeValue={(value) => onChangeItem({ id, value })} value={value} onDelete={() => onDeleteItem(id)} />
       </span>
       <TodoAssignButton id={id} value={assigned} onChangeValue={(assigned) => onChangeItem({ id, assigned })} />
     </li>
@@ -266,7 +284,7 @@ function TodoListItem({ id, value, status, priority, assigned, onChangeItem }: T
 }
 
 
-function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, ...props }: TaskSectionProps) {
+function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, onDeleteItem, ...props }: TaskSectionProps) {
   const handleCreateItemForSection = (item: Partial<TodoItem> ={}) => onCreateItem({ status: value, ...item });
 
   if (items.length === 0) {
@@ -275,9 +293,10 @@ function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, ..
 
   return (
     <div {...props}>
+      {/* @ts-expect-error union & objects are non-transitive */}
       <TaskSectionHeader label={label} value={value} icon={icon} count={items.length} onCreateItem={handleCreateItemForSection} />
       <ul className="flex flex-col divide-y divide-base-100">
-        {items.map((item) => <TodoListItem {...item} key={item.id} onChangeItem={onChangeItem} />)}
+        {items.map((item) => <TodoListItem {...item} key={item.id} onChangeItem={onChangeItem} onDeleteItem={onDeleteItem} />)}
       </ul>
     </div>
   )
@@ -318,6 +337,10 @@ function TaskSections() {
     setTodos(todos.map(todo => todo.id !== id ? todo : {...todo, ...value}))
   }
 
+  const handleDeleteItem: OnDeleteItem = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id))
+  }
+
   return (
     <div className="">
       {statuses.map(status => (
@@ -328,6 +351,7 @@ function TaskSections() {
           className="flex-1"
           onCreateItem={handleCreateItem}
           onChangeItem={handleChangeItem}
+          onDeleteItem={handleDeleteItem}
         />
       ))}
     </div >
