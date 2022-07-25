@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import React, { PropsWithChildren, useState, createContext, useContext } from "react";
+import { usePersistedState } from "./hooks";
 
 type Theme = [
     boolean,
@@ -9,31 +10,20 @@ type Theme = [
 export const ThemeContext = createContext<Theme>([false, () => { }]);
 
 const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = usePersistedState('theme', false);
 
-    
-    // Persist to local storage,
-    // & change top level node (because this effects only direct descendants & <App/> isn't mounted at the top-level)
-    const changeTheme = React.useCallback((isDarkMode: boolean) => {
-        setIsDarkMode(isDarkMode);
-        
-        if (isDarkMode) {
-            localStorage.theme = 'dark';
-            document.documentElement.setAttribute('data-theme', 'dark')
-        } else {
-            localStorage.theme = 'light'
-            document.documentElement.setAttribute('data-theme', 'light')
-        }
-    }, [setIsDarkMode])
     
     React.useEffect(() => {
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            changeTheme(true);
+        if (isDarkMode || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark')
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light')
         }
-    }, [])
+    }, [isDarkMode])
+
 
     return (
-        <ThemeContext.Provider value={[isDarkMode, changeTheme]}>
+        <ThemeContext.Provider value={[isDarkMode, setIsDarkMode]}>
             <div data-theme={isDarkMode ? "dark" : "light"} className="w-full h-full min-h-screen">
                 {children}
             </div>

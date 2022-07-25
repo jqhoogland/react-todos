@@ -3,6 +3,7 @@ import { ChangeEventHandler, HTMLProps, useState } from 'react'
 import ThemeProvider, { ThemeToggle, useTheme } from './ThemeProvider';
 import { PlusIcon, UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
+import { usePersistedState } from './hooks';
 
 const statuses = [
   { label: 'In Review', value: "in_review", icon: "🙇" },
@@ -303,7 +304,7 @@ function AddButton(props: IconButtonProps) {
 
 
 function TaskSections() {
-  const [todos, setTodos] = useState(defaultTodos);
+  const [todos, setTodos] = usePersistedState('todos', defaultTodos);
 
   const handleCreateItem: OnCreateItem = (value= {}) => {
     console.log("Creating new item", value)
