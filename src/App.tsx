@@ -1,4 +1,6 @@
-import { HTMLProps, useState } from 'react'
+import React, { PropsWithChildren } from 'react';
+import { ChangeEventHandler, HTMLProps, useState } from 'react'
+import { ThemeToggle, useTheme } from './ThemeProvider';
 
 interface TodoItem {
   id: number;
@@ -169,12 +171,20 @@ function Kanban() {
   )
 }
 
+const NavBar = () => {
+  const { isDarkMode, toggleMode} = useTheme();
+
+  return (
+    <nav className="sticky-top bg-stone-300 h-20 flex items-center flex justify-between pr-20">
+      <h1 className="px-8 text-lg font-bold"><code>bit-todos</code></h1>
+      <ThemeToggle />
+    </nav>
+  )
+}
 function App() {
   return (
     <div>
-      <nav className="sticky-top bg-stone-300 h-20 flex items-center">
-        <h1 className="px-8 text-2xl font-bold"><code>react-kanban</code></h1>
-      </nav>
+      <NavBar />
       <main className="max-w-screen-md p-8 mx-auto">
         <Kanban />
       </main>
