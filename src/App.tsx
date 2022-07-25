@@ -249,7 +249,7 @@ function EditableValue({ value, onChangeValue }: { value: string, onChangeValue:
     return <input className="input input-bordered input-sm w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />
   }
 
-return <span className="w-full" onClick={() => setIsEditing(true)}>{value}</span>
+return <span className="w-full h-full min-h-6" onClick={() => setIsEditing(true)}>{value}</span>
 }
 
 function TodoListItem({ id, value, status, priority, assigned, onChangeItem }: TodoItem & { onChangeItem : OnChangeItem}) {
