@@ -20,6 +20,7 @@ function Tasks() {
                 statuses.map(status => (
                     <TodoList
                         title={status.label}
+                        status={status.value}
                         todos={todos}
                         onCreateItem={handleCreateItem}
                         onUpdateItem={handleUpdateItem}
@@ -38,15 +39,16 @@ type OnUpdateItem = (id: TodoItem['id'], item?: Partial<TodoItem>) => void;
 
 interface TodoListProps {
     todos: TodoItem[];
+    status: Status['value'];
     title: string
     onCreateItem: OnCreateItem
     onUpdateItem: OnUpdateItem
 }
 
-function TodoList({ title, todos, onCreateItem, onUpdateItem }: TodoListProps) {
+function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoListProps) {
     return (
         <section>
-            <Header action={<button onClick={() => onCreateItem()}>+</button>}>
+            <Header action={<button onClick={() => onCreateItem({status})}>+</button>}>
                 <h2 className="text-xl font-bold">{title}</h2>
             </Header>
             <ul className="space-y-2 px-4">
