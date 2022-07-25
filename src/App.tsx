@@ -1,10 +1,9 @@
-import React, { PropsWithChildren, useRef } from 'react';
-import { ChangeEventHandler, HTMLProps, useState } from 'react'
-import ThemeProvider, { ThemeToggle, useTheme } from './ThemeProvider';
+import autoAnimate from "@formkit/auto-animate";
 import { PlusIcon, UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
+import React, { HTMLProps, useEffect, useRef, useState } from 'react';
 import { usePersistedState } from './hooks';
-import { flushSync } from 'react-dom';
+import ThemeProvider, { ThemeToggle } from './ThemeProvider';
 
 const statuses = [
   { label: 'In Review', value: "in_review", icon: "🙇" },
@@ -17,11 +16,11 @@ const statuses = [
 type Status = typeof statuses[number];
 
 const priorities = [
-  { label: 'Urgent', value: "urgent", icon:"🔥" },
-  { label: 'High', value: "high", icon: "🟧"},
-  { label: 'Medium', value: "medium" , icon: "🟨"},
-  { label: 'Low', value: "low", icon: "🟩" },
-  { label: 'None', value: "none", icon:"⬜️" },
+  { label: 'Urgent', value: 5, icon:"🔥" },
+  { label: 'High', value: 4, icon: "🟧"},
+  { label: 'Medium', value: 3 , icon: "🟨"},
+  { label: 'Low', value: 2, icon: "🟩" },
+  { label: 'None', value: 1, icon:"⬜️" },
 ] as const
 
 type Priority = typeof priorities[number];
@@ -48,31 +47,31 @@ const defaultTodoItem: Omit<TodoItem, "id"> = {
   value: "",
   completed: false,
   status: 'todo',
-  priority: 'none',
+  priority: 1,
   assigned: []
 }
 
 const defaultTodos: TodoItem[] = [
-  { id: 0, priority: 'none', value: 'Learn JavaScript', completed: false, assigned: [], status: "done" },
-  { id: 1, priority: 'none', value: 'Learn React', completed: false, assigned: [], status: "in_progress" },
-  { id: 2, priority: 'none', value: 'Learn TypeScript', completed: false, assigned: [], status: "in_progress" },
-  { id: 3, priority: 'none', value: 'Learn React Native', completed: false, assigned: [], status: "todo" },
-  { id: 4, priority: 'none', value: 'Learn GraphQL', completed: false, assigned: [], status: "todo" },
-  { id: 5, priority: 'none', value: 'Learn Next.js', completed: false, assigned: [], status: "todo" },
-  { id: 6, priority: 'none', value: 'Learn Node.js', completed: false, assigned: [], status: "todo" },
-  { id: 7, priority: 'none', value: 'Learn MongoDB', completed: false, assigned: [], status: "todo" },
-  { id: 8, priority: 'none', value: 'Learn SQL', completed: false, assigned: [], status: "todo" },
-  { id: 9, priority: 'none', value: 'Learn Python', completed: false, assigned: [], status: "in_progress" },
-  { id: 10, priority: 'none', value: 'Learn Java', completed: false, assigned: [], status: "in_progress" },
-  { id: 11, priority: 'none', value: 'Learn C++', completed: false, assigned: [], status: "in_progress" },
-  { id: 12, priority: 'none', value: 'Learn C#', completed: false, assigned: [], status: "todo" },
-  { id: 13, priority: 'none', value: 'Learn Go', completed: false, assigned: [], status: "todo" },
-  { id: 14, priority: 'none', value: 'Learn Rust', completed: false, assigned: [], status: "todo" },
-  { id: 15, priority: 'none', value: 'Learn Kotlin', completed: false, assigned: [], status: "todo" },
-  { id: 16, priority: 'none', value: 'Learn Swift', completed: false, assigned: [], status: "todo" },
-  { id: 17, priority: 'none', value: 'Learn Elixir', completed: false, assigned: [], status: "todo" },
-  { id: 18, priority: 'none', value: 'Learn Ruby', completed: false, assigned: [], status: "todo" },
-  { id: 19, priority: 'none', value: 'Learn PHP', completed: false, assigned: [], status: "todo" },
+  { id: 0, priority: 5, value: 'Learn JavaScript', completed: false, assigned: [], status: "done" },
+  { id: 1, priority: 5, value: 'Learn React', completed: false, assigned: [], status: "in_progress" },
+  { id: 2, priority: 4, value: 'Learn TypeScript', completed: false, assigned: [], status: "in_progress" },
+  { id: 3, priority: 1, value: 'Learn React Native', completed: false, assigned: [], status: "todo" },
+  { id: 4, priority: 1, value: 'Learn GraphQL', completed: false, assigned: [], status: "todo" },
+  { id: 5, priority: 3, value: 'Learn Next.js', completed: false, assigned: [], status: "todo" },
+  { id: 6, priority: 1, value: 'Learn Node.js', completed: false, assigned: [], status: "todo" },
+  { id: 7, priority: 1, value: 'Learn MongoDB', completed: false, assigned: [], status: "todo" },
+  { id: 8, priority: 1, value: 'Learn SQL', completed: false, assigned: [], status: "todo" },
+  { id: 9, priority: 1, value: 'Learn Python', completed: false, assigned: [], status: "in_progress" },
+  { id: 10, priority: 1, value: 'Learn Java', completed: false, assigned: [], status: "in_progress" },
+  { id: 11, priority: 1, value: 'Learn C++', completed: false, assigned: [], status: "in_progress" },
+  { id: 12, priority: 1, value: 'Learn C#', completed: false, assigned: [], status: "todo" },
+  { id: 13, priority: 1, value: 'Learn Go', completed: false, assigned: [], status: "todo" },
+  { id: 14, priority: 1, value: 'Learn Rust', completed: false, assigned: [], status: "todo" },
+  { id: 15, priority: 1, value: 'Learn Kotlin', completed: false, assigned: [], status: "todo" },
+  { id: 16, priority: 1, value: 'Learn Swift', completed: false, assigned: [], status: "todo" },
+  { id: 17, priority: 1, value: 'Learn Elixir', completed: false, assigned: [], status: "todo" },
+  { id: 18, priority: 1, value: 'Learn Ruby', completed: false, assigned: [], status: "todo" },
+  { id: 19, priority: 1, value: 'Learn PHP', completed: false, assigned: [], status: "todo" },
 ]
 
 
@@ -128,7 +127,7 @@ interface TodoStatusButtonProps extends TodoButton {
   onChangeValue: (status: Status['value']) => void;
 }
 
-function TodoStatusButton({ id, value, onChangeValue }: TodoStatusButtonProps) {
+function TodoStatusButton({ value, onChangeValue }: TodoStatusButtonProps) {
   return (
     <IconButtonWithDropdown trigger={<IconButton tabIndex={0}><div className="checkbox checkbox-xs" /></IconButton>}>
       <li className="menu-title pt-2">
@@ -273,7 +272,7 @@ function EditableValue({ value, onChangeValue, onDelete }: EditableViewProps) {
 return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>
 }
 
-function TodoListItem({ id, value, status, priority, assigned, onChangeItem, onDeleteItem }: TodoItem & { onChangeItem : OnChangeItem, onDelete: OnDeleteItem}) {
+function TodoListItem({ id, value, status, priority, assigned, onChangeItem, onDeleteItem }: TodoItem & { onChangeItem : OnChangeItem, onDeleteItem: OnDeleteItem}) {
   return (
     <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100 items-baseline">
       <span className="flex flex-row items-baseline gap-2 flex-1">
@@ -288,7 +287,18 @@ function TodoListItem({ id, value, status, priority, assigned, onChangeItem, onD
 
 
 function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, onDeleteItem, ...props }: TaskSectionProps) {
+  const parentRef = useRef<HTMLOListElement | null>(null);
   const handleCreateItemForSection = (item: Partial<TodoItem> ={}) => onCreateItem({ status: value, ...item });
+
+  useEffect(() => {
+    if (parentRef.current) {
+      autoAnimate(parentRef.current)
+    } 
+  }, [parent])
+
+  const orderedItems = React.useMemo(() => {
+    return items.sort((a, b) => b.priority - a.priority)
+  }, [items])
 
   if (items.length === 0) {
     return <></>
@@ -298,8 +308,8 @@ function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, on
     <div {...props}>
       {/* @ts-expect-error union & objects are non-transitive */}
       <TaskSectionHeader label={label} value={value} icon={icon} count={items.length} onCreateItem={handleCreateItemForSection} />
-      <ul className="flex flex-col divide-y divide-base-100">
-        {items.map((item) => <TodoListItem {...item} key={item.id} onChangeItem={onChangeItem} onDeleteItem={onDeleteItem} />)}
+      <ul className="flex flex-col divide-y divide-base-100" ref={parentRef}>
+        {orderedItems.map((item) => <TodoListItem {...item} key={item.id} onChangeItem={onChangeItem} onDeleteItem={onDeleteItem} />)}
       </ul>
     </div>
   )
