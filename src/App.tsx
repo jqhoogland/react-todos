@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { TodoItem } from './data';
 
 interface TodoItem {
   id: number;
@@ -41,6 +40,12 @@ interface TodoItemProps {
   value: string
 }
 
-function TodoItem({value}: TodoItemProps) {
-  return <span>{value}</span>
+function TodoItem({ value }: TodoItemProps) {
+  const [isEditing, setIsEditing] = useState(false)
+
+  if (isEditing) {
+    return <input value={value} />
+  }
+
+  return <span onClick={() => setIsEditing(true)}>{value}</span>
 }
