@@ -67,7 +67,7 @@ interface TodoItemProps {
 
 function TodoListItem({  value }: TodoItemProps) {
     return (
-        <li className="flex">
+      <li className="flex">
         <span className="pr-4">
           <TodoStatusSelect />
         </span>

@@ -79,3 +79,17 @@ Goals:
 - Learn how to break apart files into a semisensible structure. (Atomic components is overkill and bad.)
     - https://www.joshwcomeau.com/react/file-structure/
     - https://www.youtube.com/watch?v=86i8ZODqMlI
+
+
+## 3. Find the minimal but complete representation of UI state
+
+(Mostly thoughtwork)
+
+What is state and what isn't? (This question is always relative to a given component)
+- The status inside the status select component? Nope. We want it to be passed down all the way from the top-level Tasks component.
+- The text of the todo component inside the text input? Nope. This is "controlled" also by the top-level Tasks component.
+- Whether the todo component is editable (and displaying an input) or not (and displaying a span). Yes. This exists locally on each component.
+- The list of todo items inside the status-specific todo list? Nope. This is passed down from one higher component, a <Tasks/> component whose state contains all of the todos.
+    - This is because we want to be able to change todos between different lists by selecting a new status. It wouldn't be possible if the state was restricted to a specific status.
+
+
