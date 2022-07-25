@@ -1,48 +1,78 @@
 import React, { PropsWithChildren } from 'react';
 import { ChangeEventHandler, HTMLProps, useState } from 'react'
 import ThemeProvider, { ThemeToggle, useTheme } from './ThemeProvider';
-import { PlusIcon } from "@heroicons/react/solid";
+import { PlusIcon, UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
+
+const statuses = [
+  { label: 'In Review', value: "in_review", icon: "🙇" },
+  { label: 'In Progress', value: "in_progress", icon: "🏃" },
+  { label: 'Todo', value: "todo", icon: "📥" },
+  { label: 'Done', value: "done", icon: "☑️" },
+  { label: 'Canceled', value: "canceled", icon: "🗑" }
+] as const
+
+type Status = typeof statuses[number];
+type StatusLabel = Status['label'];
+type StatusValue = Status['value'];
+
+const priorities = [
+  { label: 'Low', value: "low", icon: "🟩" },
+  { label: 'Medium', value: "medium" , icon: "🟨"},
+  { label: 'High', value: "high", icon: "🟧"},
+  { label: 'Urgent', value: "urgent", icon:"🔥" },
+  { label: 'None', value: "none", icon:"⬜️" },
+] as const
+
+type Priority = typeof priorities[number];
+type PriorityLabel = Priority['label'];
+type PriorityValue = Priority['value'];
+
+interface User {
+  id: number;
+  name: string;
+}
 
 interface TodoItem {
   id: number;
   value: string;
   completed: boolean;
-  status: typeof statuses[number]['label'];
+  status: StatusValue;
+  priority: PriorityValue;
+  assigned: User[]
 }
 
-const statuses = [
-  { label: 'In Review' },
-  { label: 'In Progress' },
-  { label: 'Todo' },
-  { label: 'Done' },
-  { label: 'Canceled' }
+
+const defaultTodoItem: Omit<TodoItem, "id"> = {
+  value: "",
+  completed: false,
+  status: 'todo',
+  priority: 'none',
+  assigned: []
+}
+
+const defaultTodos: TodoItem[] = [
+  { id: 0, priority: 'none', value: 'Learn JavaScript', completed: false, assigned: [], status: "done" },
+  { id: 1, priority: 'none', value: 'Learn React', completed: false, assigned: [], status: "in_progress" },
+  { id: 2, priority: 'none', value: 'Learn TypeScript', completed: false, assigned: [], status: "in_progress" },
+  { id: 3, priority: 'none', value: 'Learn React Native', completed: false, assigned: [], status: "todo" },
+  { id: 4, priority: 'none', value: 'Learn GraphQL', completed: false, assigned: [], status: "todo" },
+  { id: 5, priority: 'none', value: 'Learn Next.js', completed: false, assigned: [], status: "todo" },
+  { id: 6, priority: 'none', value: 'Learn Node.js', completed: false, assigned: [], status: "todo" },
+  { id: 7, priority: 'none', value: 'Learn MongoDB', completed: false, assigned: [], status: "todo" },
+  { id: 8, priority: 'none', value: 'Learn SQL', completed: false, assigned: [], status: "todo" },
+  { id: 9, priority: 'none', value: 'Learn Python', completed: false, assigned: [], status: "in_progress" },
+  { id: 10, priority: 'none', value: 'Learn Java', completed: false, assigned: [], status: "in_progress" },
+  { id: 11, priority: 'none', value: 'Learn C++', completed: false, assigned: [], status: "in_progress" },
+  { id: 12, priority: 'none', value: 'Learn C#', completed: false, assigned: [], status: "todo" },
+  { id: 13, priority: 'none', value: 'Learn Go', completed: false, assigned: [], status: "todo" },
+  { id: 14, priority: 'none', value: 'Learn Rust', completed: false, assigned: [], status: "todo" },
+  { id: 15, priority: 'none', value: 'Learn Kotlin', completed: false, assigned: [], status: "todo" },
+  { id: 16, priority: 'none', value: 'Learn Swift', completed: false, assigned: [], status: "todo" },
+  { id: 17, priority: 'none', value: 'Learn Elixir', completed: false, assigned: [], status: "todo" },
+  { id: 18, priority: 'none', value: 'Learn Ruby', completed: false, assigned: [], status: "todo" },
+  { id: 19, priority: 'none', value: 'Learn PHP', completed: false, assigned: [], status: "todo" },
 ]
-
-
-
-const defaultTodos = [
-  { id: 0, value: 'Learn JavaScript', completed: false, status: "Done" },
-  { id: 1, value: 'Learn React', completed: false, status: "In Progress" },
-  { id: 2, value: 'Learn TypeScript', completed: false, status: "In Progress" },
-  { id: 3, value: 'Learn React Native', completed: false, status: "Todo" },
-  { id: 4, value: 'Learn GraphQL', completed: false, status: "Todo" },
-  { id: 5, value: 'Learn Next.js', completed: false, status: "Todo" },
-  { id: 6, value: 'Learn Node.js', completed: false, status: "Todo" },
-  { id: 7, value: 'Learn MongoDB', completed: false, status: "Todo" },
-  { id: 8, value: 'Learn SQL', completed: false, status: "Todo" },
-  { id: 9, value: 'Learn Python', completed: false, status: "In Progress" },
-  { id: 10, value: 'Learn Java', completed: false, status: "In Progress" },
-  { id: 11, value: 'Learn C++', completed: false, status: "In Progress" },
-  { id: 12, value: 'Learn C#', completed: false, status: "Todo" },
-  { id: 13, value: 'Learn Go', completed: false, status: "Todo" },
-  { id: 14, value: 'Learn Rust', completed: false, status: "Todo" },
-  { id: 15, value: 'Learn Kotlin', completed: false, status: "Todo" },
-  { id: 16, value: 'Learn Swift', completed: false, status: "Todo" },
-  { id: 17, value: 'Learn Elixir', completed: false, status: "Todo" },
-  { id: 18, value: 'Learn Ruby', completed: false, status: "Todo" },
-  { id: 19, value: 'Learn PHP', completed: false, status: "Todo" },
-] as TodoItem[]
 
 
 type OnCreateItem = (item: string) => void;
@@ -58,75 +88,94 @@ interface TaskSectionHeaderProps {
   onCreateItem: OnCreateItem
 }
 
-function TaskSectionHeader ({ label, count, onCreateItem }: TaskSectionHeaderProps) {
+function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProps) {
   return (
     <header className="flex items-center gap-2 px-4 py-2 bg-base-100 justify-between">
       <span className="flex gap-2 items-baseline">
         <h2 className='text-xl font-bold'>{label}</h2>
         <h4>{count}</h4>
       </span>
-      <AddButton onClick={() => onCreateItem("")}/>
+      <AddButton onClick={() => onCreateItem("")} />
     </header>
   )
 }
 
-function KanbanItemMenu({ value }: { value: string }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return <div className="relative">
-    <IconButton onClick={() => setIsOpen(!isOpen)}>?</IconButton>
-    {isOpen && (
-      <div className="absolute top-0 left-0 bg-white rounded-xl p-8 shadow-xl z-10">
-        <IconButton onClick={() => setIsOpen(false)}>⨉</IconButton>
-        <ul>
-          <li>Change Status</li>
-        </ul>
-      </div>
-    )}
-  </div>
+interface IconButtonWithDropdownProps extends PropsWithChildren {
+  icon: React.ReactNode,
 }
 
-function TodoItem({ value }: { value: string }) {
-  return <li className="flex gap-2 pr-4"><input type="checkbox" />{value}<div className="flex-1" /><KanbanItemMenu value={value} /></li>
-}
-
-function AddTodoItem({ onSubmit }: { onSubmit: (value: string) => void }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState('')
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      onSubmit(value);
-      setValue('');
-      setIsOpen(false)
-    }
-  }
-
-  if (isOpen) {
-    return (
-      <div className="flex gap-2 pt-2 items-center">
-        <IconButton onClick={() => setIsOpen(false)}><PlusIcon/></IconButton>
-        <input
-          type="text"
-          className="rounded-lg border-2 px-2"
-          value={value}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-        />
-      </div>
-    )
-  }
-
+function IconButtonWithDropdown({ children, icon }: IconButtonWithDropdownProps) {
   return (
-    <div className="flex gap-2 pt-2 items-center">
-      <IconButton onClick={() => setIsOpen(true)} />
-    </div>
+    <div className="dropdown">
+      <IconButton tabIndex={0}>{icon}</IconButton>
+      <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+        {children}
+      </ul>
+    </div>  
   )
 }
+
+interface TodoButton {
+  id: number
+}
+
+interface TodoStatusButtonProps extends TodoButton {
+  value: StatusValue;
+}
+
+function TodoStatusButton({ value }: TodoStatusButtonProps) {
+  return (
+    <IconButtonWithDropdown icon={<div className="checkbox checkbox-xs"/>}>
+
+    </IconButtonWithDropdown>
+  )
+}
+
+interface TodoPriorityButtonProps extends TodoButton {
+  value: PriorityValue;
+}
+
+function TodoPriorityButton({ id, value }: TodoPriorityButtonProps) {
+  const icon = React.useMemo(() => {
+    return priorities.find(s => s.value === value)?.icon
+  }, [value])
+
+  return (
+    <IconButtonWithDropdown icon={icon}>
+
+    </IconButtonWithDropdown>
+  )
+}
+
+interface TodoAssignButtonProps extends TodoButton {
+  value: User[];
+}
+
+
+function TodoAssignButton({ value }: TodoAssignButtonProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <IconButtonWithDropdown icon={<UserIcon/>}>
+
+    </IconButtonWithDropdown>
+  )
+}
+
+
+function TodoListItem({ id, value, status, priority, assigned }: TodoItem) {
+  return (
+    <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:brightness-110">
+      <span className="flex flex-row items-baseline gap-2">
+        <div className="top-1 relative"><TodoStatusButton id={id} value={status} /></div>
+        <TodoPriorityButton id={id} value={priority} />
+        {value}
+      </span>
+      <TodoAssignButton id={id} value={assigned} />
+    </li>
+  )
+}
+
 
 function TaskSection({ label, items, onCreateItem, ...props }: TaskSectionProps) {
   if (items.length === 0) {
@@ -136,20 +185,20 @@ function TaskSection({ label, items, onCreateItem, ...props }: TaskSectionProps)
   return (
     <div {...props}>
       <TaskSectionHeader label={label} count={items.length} onCreateItem={onCreateItem} />
-      <ul className="flex flex-col">
-        {items.map((item) => <TodoItem value={item.value} />)}
+      <ul className="flex flex-col divide-y divide-base-100">
+        {items.map((item) => <TodoListItem {...item} key={item.id} />)}
       </ul>
     </div>
   )
 }
 
-type IconButtonProps = Omit<HTMLProps<HTMLButtonElement>, 'type'>
+type IconButtonProps = Omit<HTMLProps<HTMLButtonElement>, 'type'> & { Component?: string | React.ComponentType<Omit<IconButtonProps, "Component">>}
 
-function IconButton(props: IconButtonProps) {
+function IconButton({ className, ...props }: IconButtonProps) {
   return (
     <button
       {...props}
-      className={clsx("btn btn-xs min-w-0 min-h-0 p-1", props?.className)}
+      className={clsx("btn btn-xs btn-ghost min-w-0 min-h-0 w-6 h-6 p-1", className)}
     />
   )
 }
@@ -166,11 +215,10 @@ function AddButton(props: IconButtonProps) {
 function TaskSections() {
   const [todos, setTodos] = useState(defaultTodos);
 
-
-  const handleCreateItem = (value: string, status: string) => {
+  const handleCreateItem = (value: Partial<TodoItem>) => {
     setTodos([
       ...todos,
-      { id: todos.length + 1, value, completed: false, status }
+      { id: todos.length + 1, ...defaultTodoItem, ...value,}
     ]);
   }
 
@@ -179,9 +227,9 @@ function TaskSections() {
       {statuses.map(status => (
         <TaskSection
           label={status.label}
-          items={todos.filter(todo => todo.status === status.label)}
+          items={todos.filter(todo => todo.status === status.value)}
           className="flex-1"
-          onCreateItem={(value: string) => handleCreateItem(value, status.label)}
+          onCreateItem={(value: string) => handleCreateItem({value})}
           key={status.label}
         />
       ))}
@@ -200,10 +248,10 @@ const NavBar = () => {
 function App() {
   return (
     <ThemeProvider>
-        <NavBar />
-        <main className="bg-base-200 min-h-screen">
-          <TaskSections />
-        </main>
+      <NavBar />
+      <main className="bg-base-200 min-h-screen">
+        <TaskSections />
+      </main>
     </ThemeProvider>
   )
 }
