@@ -27,7 +27,7 @@ function TodoList() {
       <ul>
           {todos.map(todo => (
             <li key={todo.id}>
-              <TodoItem value={todo.value}/>
+              <TodoItem defaultValue={todo.value}/>
             </li>
           ))} 
           </ul>
@@ -37,14 +37,19 @@ function TodoList() {
 }
 
 interface TodoItemProps {
-  value: string
+  defaultValue: string
 }
 
-function TodoItem({ value }: TodoItemProps) {
+function TodoItem({ defaultValue }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false)
+  const [value, setValue] = useState(defaultValue)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value)
+  }
 
   if (isEditing) {
-    return <input value={value} />
+    return <input value={value} onChange={handleChange} />
   }
 
   return <span onClick={() => setIsEditing(true)}>{value}</span>
