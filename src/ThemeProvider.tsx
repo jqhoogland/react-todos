@@ -11,17 +11,12 @@ export const ThemeContext = createContext<Theme>([false, () => { }]);
 const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
-    React.useEffect(() => {
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            setIsDarkMode(true);
-        }
-    }, [])
     
+    // Persist to local storage,
+    // & change top level node (because this effects only direct descendants & <App/> isn't mounted at the top-level)
     const changeTheme = React.useCallback((isDarkMode: boolean) => {
         setIsDarkMode(isDarkMode);
-
-        // Persist to local storage,
-        // & change top level node (because this effects only direct descendants & <App/> isn't mounted at the top-level)
+        
         if (isDarkMode) {
             localStorage.theme = 'dark';
             document.documentElement.setAttribute('data-theme', 'dark')
@@ -30,6 +25,12 @@ const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
             document.documentElement.setAttribute('data-theme', 'light')
         }
     }, [setIsDarkMode])
+    
+    React.useEffect(() => {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            changeTheme(true);
+        }
+    }, [])
 
     return (
         <ThemeContext.Provider value={[isDarkMode, changeTheme]}>
