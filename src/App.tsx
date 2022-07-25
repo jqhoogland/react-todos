@@ -17,10 +17,10 @@ type StatusLabel = Status['label'];
 type StatusValue = Status['value'];
 
 const priorities = [
-  { label: 'Low', value: "low", icon: "🟩" },
-  { label: 'Medium', value: "medium" , icon: "🟨"},
-  { label: 'High', value: "high", icon: "🟧"},
   { label: 'Urgent', value: "urgent", icon:"🔥" },
+  { label: 'High', value: "high", icon: "🟧"},
+  { label: 'Medium', value: "medium" , icon: "🟨"},
+  { label: 'Low', value: "low", icon: "🟩" },
   { label: 'None', value: "none", icon:"⬜️" },
 ] as const
 
@@ -28,10 +28,16 @@ type Priority = typeof priorities[number];
 type PriorityLabel = Priority['label'];
 type PriorityValue = Priority['value'];
 
-interface User {
-  id: number;
-  name: string;
-}
+
+
+const users = [
+  { name: "John Doe", id: 0 },
+  { name: "Jane Doe", id: 1 },
+]
+  
+type User = typeof users[number];
+type UserName = User['name'];
+
 
 interface TodoItem {
   id: number;
@@ -39,9 +45,8 @@ interface TodoItem {
   completed: boolean;
   status: StatusValue;
   priority: PriorityValue;
-  assigned: User[]
+  assigned: User['id'][]
 }
-
 
 const defaultTodoItem: Omit<TodoItem, "id"> = {
   value: "",
@@ -100,16 +105,15 @@ function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProp
   )
 }
 
-interface IconButtonWithDropdownProps extends PropsWithChildren {
-  id: string | number,
+interface IconButtonWithDropdownProps extends HTMLProps<HTMLDivElement> {
   icon: React.ReactNode,
 }
 
-function IconButtonWithDropdown({ id, children, icon }: IconButtonWithDropdownProps) {
+function IconButtonWithDropdown({ children, icon, ...props }: IconButtonWithDropdownProps) {
   return (
-    <div className="dropdown">
-      <label tabIndex={0} htmlFor={`${id}`}>{icon}</label>
-      <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 opacity-100 hover:opacity-100">
+    <div {...props} className={clsx("dropdown", props?.className)}>
+      <IconButton tabIndex={0}>{icon}</IconButton>
+      <ul tabIndex={0} className="dropdown-content menu p-2 bg-base-100 rounded-box w-52 opacity-100 hover:opacity-100 border-2 border-base-300 shadow-lg">
         {children}
       </ul>
     </div>  
@@ -126,11 +130,15 @@ interface TodoStatusButtonProps extends TodoButton {
 
 function TodoStatusButton({ id, value }: TodoStatusButtonProps) {
   return (
-    <IconButtonWithDropdown id={id}  icon={<div className="checkbox checkbox-xs"/>}>
+    <IconButtonWithDropdown icon={<div className="checkbox checkbox-xs" />}>
+      <li className="menu-title pt-2">
+        <span>Status</span>
+      </li>
+
       {statuses.map(status => (
         <li key={status.value}>
-          <button className="flex items-center p-2" onClick={() => console.log(status.value)}>
-            {status.icon}
+          <button className={clsx("flex items-center p-2", value === status.value && "bg-base-300")} onClick={() => console.log(status.value)}>
+            <span>{status.icon}</span>
             {status.label}
           </button>
         </li>
@@ -149,14 +157,35 @@ function TodoPriorityButton({ id, value }: TodoPriorityButtonProps) {
   }, [value])
 
   return (
-    <IconButtonWithDropdown id={id} icon={icon}>
+    <IconButtonWithDropdown icon={icon}>
+      <li className="menu-title pt-2">
+        <span>Priority</span>
+      </li>
 
+      {priorities.map(priority => (
+        <li key={priority.value}>
+          <button className={clsx("flex items-center p-2", value === priority.value && "bg-base-300")} onClick={() => console.log(priority.value)}>
+            <span>{priority.icon}</span>
+            {priority.label}
+          </button>
+        </li>
+      ))}   
     </IconButtonWithDropdown>
   )
 }
 
 interface TodoAssignButtonProps extends TodoButton {
-  value: User[];
+  value: User['id'][];
+}
+
+function ProfilePicture({ id, name }: User) {
+  const initials = name.split(' ').map(s => s[0]).join('').toUpperCase();
+
+  return (
+    <div className="rounded-full w-6 h-6 bg-rose-200 text-xs text-slate-800 pt-1">
+      {initials}
+    </div>
+  )
 }
 
 
@@ -164,8 +193,19 @@ function TodoAssignButton({ value }: TodoAssignButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <IconButtonWithDropdown icon={<UserIcon/>}>
+    <IconButtonWithDropdown icon={<UserIcon/>} className="dropdown-left">
+      <li className="menu-title pt-2">
+        <span>Assigned</span>
+      </li>
 
+      {users.map(user => (
+        <li key={user.id}>
+          <button className={clsx("flex items-center p-2", value.includes(user.id) && "bg-base-300")} onClick={() => console.log(user.value)}>
+            <ProfilePicture {...user}  />
+            {user.name}
+          </button>
+        </li>
+      ))} 
     </IconButtonWithDropdown>
   )
 }
@@ -173,7 +213,7 @@ function TodoAssignButton({ value }: TodoAssignButtonProps) {
 
 function TodoListItem({ id, value, status, priority, assigned }: TodoItem) {
   return (
-    <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100">
+    <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100 items-baseline">
       <span className="flex flex-row items-baseline gap-2">
         <div className="top-1 relative"><TodoStatusButton id={id} value={status} /></div>
         <TodoPriorityButton id={id} value={priority} />
