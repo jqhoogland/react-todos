@@ -48,8 +48,14 @@ function TodoItem({ defaultValue }: TodoItemProps) {
     setValue(e.target.value)
   }
 
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setIsEditing(false)
+    }
+  }
+
   if (isEditing) {
-    return <input value={value} onChange={handleChange} />
+    return <input value={value} onChange={handleChange} onKeyUp={handleKeyUp} />
   }
 
   return <span onClick={() => setIsEditing(true)}>{value}</span>
