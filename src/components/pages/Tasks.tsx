@@ -44,7 +44,6 @@ interface TodoListProps {
 }
 
 function TodoList({ title, todos, onCreateItem, onUpdateItem }: TodoListProps) {
-
     return (
         <section>
             <Header action={<button onClick={() => onCreateItem()}>+</button>}>
@@ -62,17 +61,16 @@ function TodoList({ title, todos, onCreateItem, onUpdateItem }: TodoListProps) {
 }
 
 interface TodoItemProps {
-    id: TodoItem['id'];
     value: string
     status: Status['value'];
     onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoListItem({ id, value, status }: TodoItemProps) {
+function TodoListItem({  value, status }: TodoItemProps) {
     return (
         <li className="flex">
         <span className="pr-4">
-          <TodoStatusSelect id={id} value={status} />
+          <TodoStatusSelect value={status} />
         </span>
         <ToggleableInput  value={value}  />
       </li>
@@ -82,7 +80,7 @@ function TodoListItem({ id, value, status }: TodoItemProps) {
 
 interface ToggleableInputProps { value: string; }
 
-export function ToggleableInput({ value, }: ToggleableInputProps) {
+export function ToggleableInput({ value }: ToggleableInputProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleOpen = () => {
