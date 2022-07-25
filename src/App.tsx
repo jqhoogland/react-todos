@@ -193,7 +193,7 @@ function TodoAssignButton({ value }: TodoAssignButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <IconButtonWithDropdown icon={<UserIcon/>} className="dropdown-left">
+    <IconButtonWithDropdown icon={<UserIcon/>} className="dropdown-bottom dropdown-end">
       <li className="menu-title pt-2">
         <span>Assigned</span>
       </li>
