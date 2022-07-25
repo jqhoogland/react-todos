@@ -24,3 +24,11 @@ Goals:
 
 
 ![](public/1-2.mov)
+
+## 3. Lifting state up
+> Let's make it possible to move todo items between a "todo" list and "completed list".
+
+Goals:
+- "Lifting state up" & the perils of local state
+
+![](public/1-3.mov)
