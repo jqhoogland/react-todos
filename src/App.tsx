@@ -13,8 +13,6 @@ const statuses = [
 ] as const
 
 type Status = typeof statuses[number];
-type StatusLabel = Status['label'];
-type StatusValue = Status['value'];
 
 const priorities = [
   { label: 'Urgent', value: "urgent", icon:"🔥" },
@@ -25,10 +23,6 @@ const priorities = [
 ] as const
 
 type Priority = typeof priorities[number];
-type PriorityLabel = Priority['label'];
-type PriorityValue = Priority['value'];
-
-
 
 const users = [
   { name: "John Doe", id: 0 },
@@ -43,8 +37,8 @@ interface TodoItem {
   id: number;
   value: string;
   completed: boolean;
-  status: StatusValue;
-  priority: PriorityValue;
+  status: Status['value'];
+  priority: Priority['value'];
   assigned: User['id'][]
 }
 
@@ -81,9 +75,12 @@ const defaultTodos: TodoItem[] = [
 
 
 type OnCreateItem = (item?: Partial<TodoItem>) => void;
+type OnChangeItem = (item: Omit<Partial<TodoItem>, 'id'> & { id: TodoItem['id'] }) => void;
+
 type TaskSectionProps = {
   items: TodoItem[];
-  onCreateItem: OnCreateItem
+  onCreateItem: OnCreateItem;
+  onChangeItem: OnChangeItem;
 } & HTMLProps<HTMLDivElement> & Status;
 
 type TaskSectionHeaderProps = {
@@ -123,10 +120,11 @@ interface TodoButton {
 }
 
 interface TodoStatusButtonProps extends TodoButton {
-  value: StatusValue;
+  value: Status['value'];
+  onChangeValue: (status: Status['value']) => void;
 }
 
-function TodoStatusButton({ id, value }: TodoStatusButtonProps) {
+function TodoStatusButton({ id, value, onChangeValue }: TodoStatusButtonProps) {
   return (
     <IconButtonWithDropdown trigger={<IconButton tabIndex={0}><div className="checkbox checkbox-xs" /></IconButton>}>
       <li className="menu-title pt-2">
@@ -135,7 +133,7 @@ function TodoStatusButton({ id, value }: TodoStatusButtonProps) {
 
       {statuses.map(status => (
         <li key={status.value}>
-          <button className={clsx("flex items-center p-2", value === status.value && "bg-base-300")} onClick={() => console.log(status.value)}>
+          <button className={clsx("flex items-center p-2", value === status.value && "bg-base-300")} onClick={() => onChangeValue(status.value)}>
             <span>{status.icon}</span>
             {status.label}
           </button>
@@ -146,10 +144,11 @@ function TodoStatusButton({ id, value }: TodoStatusButtonProps) {
 }
 
 interface TodoPriorityButtonProps extends TodoButton {
-  value: PriorityValue;
+  value: Priority['value'];
+  onChangeValue: (priority: Priority['value']) => void;
 }
 
-function TodoPriorityButton({ id, value }: TodoPriorityButtonProps) {
+function TodoPriorityButton({ id, value,onChangeValue }: TodoPriorityButtonProps) {
   const icon = React.useMemo(() => {
     return priorities.find(s => s.value === value)?.icon
   }, [value])
@@ -162,7 +161,7 @@ function TodoPriorityButton({ id, value }: TodoPriorityButtonProps) {
 
       {priorities.map(priority => (
         <li key={priority.value}>
-          <button className={clsx("flex items-center p-2", value === priority.value && "bg-base-300")} onClick={() => console.log(priority.value)}>
+          <button className={clsx("flex items-center p-2", value === priority.value && "bg-base-300")} onClick={() => onChangeValue(priority.value)}>
             <span>{priority.icon}</span>
             {priority.label}
           </button>
@@ -172,13 +171,9 @@ function TodoPriorityButton({ id, value }: TodoPriorityButtonProps) {
   )
 }
 
-interface TodoAssignButtonProps extends TodoButton {
-  value: User['id'][];
-}
-
 function ProfilePicture({ id, name, className="w-6 h-6"}: User & Omit<HTMLProps<HTMLDivElement>, "id">) {
   const initials = name.split(' ').map(s => s[0]).join('').toUpperCase();
-
+  
   return (
     <div className={clsx("avatar rounded-full bg-rose-200 text-xs text-slate-800 flex place-items-center", className)}>
       <span className='w-full text-center'>{initials}</span>
@@ -187,7 +182,12 @@ function ProfilePicture({ id, name, className="w-6 h-6"}: User & Omit<HTMLProps<
 }
 
 
-function TodoAssignButton({ value }: TodoAssignButtonProps) {
+interface TodoAssignButtonProps extends TodoButton {
+  value: User['id'][];
+  onChangeValue: (assigned: User['id'][]) => void;
+}
+
+function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const trigger = React.useMemo(() => {
@@ -203,9 +203,16 @@ function TodoAssignButton({ value }: TodoAssignButtonProps) {
         ))}
       </button>
     )
-
   }, [value])
   
+  const handleToggle = (userId: User['id']) => {
+    if (value.includes(userId)) {
+      onChangeValue(value.filter(id => id !== userId));
+    } else {
+      onChangeValue([...value, userId]);
+    }
+  }
+
   return (
     <IconButtonWithDropdown trigger={trigger} className="dropdown-bottom dropdown-end">
       <li className="menu-title pt-2">
@@ -214,7 +221,7 @@ function TodoAssignButton({ value }: TodoAssignButtonProps) {
 
       {users.map(user => (
         <li key={user.id}>
-          <button className={clsx("flex items-center p-2", value.includes(user.id) && "bg-base-300")} onClick={() => console.log(user.value)}>
+          <button className={clsx("flex items-center p-2", value.includes(user.id) && "bg-base-300")} onClick={() => handleToggle(user.id)}>
             <ProfilePicture {...user}  />
             {user.name}
           </button>
@@ -224,22 +231,41 @@ function TodoAssignButton({ value }: TodoAssignButtonProps) {
   )
 }
 
+function EditableValue({ value, onChangeValue }: { value: string, onChangeValue: (value: string) => void }) {
+  const [isEditing, setIsEditing] = useState(false);
 
-function TodoListItem({ id, value, status, priority, assigned }: TodoItem) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeValue(e.target.value)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code === 'Enter' || e.code === 'Escape') {
+      setIsEditing(false)
+    }
+  }
+
+  if (isEditing) {
+    return <input className="input input-bordered input-sm w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />
+  }
+
+return <span className="w-full" onClick={() => setIsEditing(true)}>{value}</span>
+}
+
+function TodoListItem({ id, value, status, priority, assigned, onChangeItem }: TodoItem & { onChangeItem : OnChangeItem}) {
   return (
     <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100 items-baseline">
-      <span className="flex flex-row items-baseline gap-2">
-        <div className="top-1 relative"><TodoStatusButton id={id} value={status} /></div>
-        <TodoPriorityButton id={id} value={priority} />
-        {value}
+      <span className="flex flex-row items-baseline gap-2 flex-1">
+        <div className="top-1 relative"><TodoStatusButton id={id} value={status} onChangeValue={(status) => onChangeItem({ id, status })} /></div>
+        <TodoPriorityButton id={id} value={priority} onChangeValue={(priority) => onChangeItem({ id, priority })} />
+        <EditableValue onChangeValue={(value) => onChangeItem({ id, value })} value={value}/>
       </span>
-      <TodoAssignButton id={id} value={assigned} />
+      <TodoAssignButton id={id} value={assigned} onChangeValue={(assigned) => onChangeItem({ id, assigned })} />
     </li>
   )
 }
 
 
-function TaskSection({ label, value, icon, items, onCreateItem, ...props }: TaskSectionProps) {
+function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, ...props }: TaskSectionProps) {
   const handleCreateItemForSection = (item: Partial<TodoItem> ={}) => onCreateItem({ status: value, ...item });
 
   if (items.length === 0) {
@@ -250,7 +276,7 @@ function TaskSection({ label, value, icon, items, onCreateItem, ...props }: Task
     <div {...props}>
       <TaskSectionHeader label={label} value={value} icon={icon} count={items.length} onCreateItem={handleCreateItemForSection} />
       <ul className="flex flex-col divide-y divide-base-100">
-        {items.map((item) => <TodoListItem {...item} key={item.id} />)}
+        {items.map((item) => <TodoListItem {...item} key={item.id} onChangeItem={onChangeItem} />)}
       </ul>
     </div>
   )
@@ -279,7 +305,7 @@ function AddButton(props: IconButtonProps) {
 function TaskSections() {
   const [todos, setTodos] = useState(defaultTodos);
 
-  const handleCreateItem = (value: Partial<TodoItem> = {}) => {
+  const handleCreateItem: OnCreateItem = (value= {}) => {
     console.log("Creating new item", value)
     setTodos([
       ...todos,
@@ -287,15 +313,20 @@ function TaskSections() {
     ]);
   }
 
+  const handleChangeItem: OnChangeItem = ({id, ...value}) => {
+    setTodos(todos.map(todo => todo.id !== id ? todo : {...todo, ...value}))
+  }
+
   return (
     <div className="">
       {statuses.map(status => (
         <TaskSection
+          key={status.label}
           {...status}
           items={todos.filter(todo => todo.status === status.value)}
           className="flex-1"
           onCreateItem={handleCreateItem}
-          key={status.label}
+          onChangeItem={handleChangeItem}
         />
       ))}
     </div >
