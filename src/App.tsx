@@ -14,9 +14,11 @@ export default function App() {
 
   return (
     <main>
-      <ul>
+      <ul style={{border: 1, backgroundColor: "blue" }}>
         {todos.map(todo => (
-          <li key={todo.id}>{todo.value}</li>
+          <li key={todo.id} className="todo-item">
+            {todo.value}
+          </li>
         ))} 
         </ul>
       <button onClick={handleCreateItem}>Add Item</button>
