@@ -16,12 +16,12 @@ export const priorities = [
   { label: 'None', value: 1, icon: "⬜️" },
 ] as const;
 export type Priority = typeof priorities[number];
-export const users = [
+export const defaultUsers = [
   { name: "John Doe", id: 0 },
   { name: "Jane Doe", id: 1 },
 ];
 
-export type User = typeof users[number];
+export type User = typeof defaultUsers[number];
 type UserName = User['name'];
 export interface TodoItem {
   id: number;

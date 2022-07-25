@@ -1,10 +1,12 @@
 import autoAnimate from "@formkit/auto-animate";
 import { UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
-import React, { HTMLProps, useEffect, useRef, useState } from 'react';
+import React, { HTMLProps, PropsWithChildren, useEffect, useRef } from 'react';
 import { AddButton, IconButton, IconButtonWithDropdown } from "../components/buttons";
-import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "../data";
+import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, defaultUsers } from "../data";
 import { usePersistedState } from '../hooks';
+import { ToggleableInput } from "../components/inputs";
+import { Header } from "../components/layout";
 
 export default function Tasks() {
   const [todos, setTodos] = usePersistedState('todos', defaultTodos);
@@ -76,33 +78,34 @@ function TaskSection({ label, value, icon, items, onCreateItem, onChangeItem, on
     </section>
   );
 }
+
 type TaskSectionHeaderProps = {
   count: number;
   onCreateItem: OnCreateItem;
 } & Status;
+
 function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProps) {
   return (
-    <header className="flex items-center gap-2 px-4 py-2 bg-base-100 justify-between sticky top-20 z-10">
-      <span className="flex gap-2 items-baseline">
+    <Header action={<AddButton onClick={() => onCreateItem()} />}>
         <h2 className='text-xl font-bold'>{label}</h2>
         <h4>{count}</h4>
-      </span>
-      <AddButton onClick={() => onCreateItem()} />
-    </header>
+    </Header>
   );
 }
+      
 function TodoListItem({ id, value, status, priority, assigned, onChangeItem, onDeleteItem }: TodoItem & { onChangeItem: OnChangeItem; onDeleteItem: OnDeleteItem; }) {
   return (
     <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100 items-baseline">
       <span className="flex flex-row items-baseline gap-2 flex-1">
         <div className="top-1 relative"><TodoStatusButton id={id} value={status} onChangeValue={(status) => onChangeItem({ id, status })} /></div>
         <TodoPriorityButton id={id} value={priority} onChangeValue={(priority) => onChangeItem({ id, priority })} />
-        <EditableValue onChangeValue={(value) => onChangeItem({ id, value })} value={value} onDelete={() => onDeleteItem(id)} />
+        <ToggleableInput onChangeValue={(value) => onChangeItem({ id, value })} value={value} onDelete={() => onDeleteItem(id)} />
       </span>
       <TodoAssignButton id={id} value={assigned} onChangeValue={(assigned) => onChangeItem({ id, assigned })} />
     </li>
   );
 }
+
 interface TodoButton {
   id: number;
 }
@@ -172,7 +175,7 @@ function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
     if (value.length === 0) {
       return <IconButton tabIndex={0}><UserIcon /></IconButton>;
     }
-    const assignedUsers = users.filter(user => value.includes(user.id));
+    const assignedUsers = defaultUsers.filter(user => value.includes(user.id));
 
     return (
       <button className="btn btn-ghost btn-sm p-0 avatar-group -space-x-4">
@@ -197,7 +200,7 @@ function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
         <span>Assigned</span>
       </li>
 
-      {users.map(user => (
+      {defaultUsers.map(user => (
         <li key={user.id}>
           <button className={clsx("flex items-center p-2", value.includes(user.id) && "bg-base-300")} onClick={() => handleToggle(user.id)}>
             <ProfilePicture {...user} />
@@ -208,41 +211,4 @@ function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
     </IconButtonWithDropdown>
   );
 }
-interface EditableViewProps { value: string; onChangeValue: (value: string) => void; onDelete: () => void; }
-function EditableValue({ value, onChangeValue, onDelete }: EditableViewProps) {
-  const ref = useRef<HTMLInputElement | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeValue(e.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code === 'Enter' || e.code === 'Escape') {
-      setIsEditing(false);
-    } else if ((e.code === 'Backspace' || e.code === "Delete") && e.target.value === '') {
-      onDelete();
-    }
-  };
-  const handleOpen = () => {
-    setIsEditing(true);
-  };
-
-  React.useEffect(() => {
-    if (value === "") {
-      handleOpen();
-    }
-  }, [value]);
-
-  React.useEffect(() => {
-    if (isEditing) {
-      ref.current?.focus();
-    }
-  }, [isEditing]);
-
-  if (isEditing) {
-    return <input ref={ref} className="input input-bordered input-sm w-full" defaultValue={value} onChange={handleChange} onKeyDown={handleKeyDown} />;
-  }
-
-  return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
-}
