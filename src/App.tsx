@@ -6,38 +6,54 @@ interface TodoItem {
   completed: boolean;
 }
 
+
 export default function App() {
+  const [todos, setTodos] = useState<TodoItem[]>([])
+
+  const handleCreateItem: OnCreateItem = (item = {s}) => {
+    setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}`, completed: false, ...item }])
+  }
+
+  const newTodos = todos.filter(todo => !todo.completed);
+  const completedTodos = todos.filter(todo => todo.completed);
+
   return (
     <main>
-      <TodoList title="Todos" completed={false} />
-      <TodoList title="Completed" completed={true} />
+      <TodoList
+        title="Todos"
+        todos={newTodos}
+        onCreateItem={() => handleCreateItem({ completed: false })}
+      />
+      <TodoList
+        title="Completed"
+        todos={completedTodos}
+        onCreateItem={() => handleCreateItem({ completed: true })}
+      />
     </main>
   )
 }
 
+type OnCreateItem = (item?: Partial<TodoItem>) => void
+
 interface TodoListProps {
+  todos: TodoItem[];
   title: string
-  completed: boolean
+  onCreateItem: OnCreateItem
 }
 
-function TodoList({title, completed}: TodoListProps) {
-  const [todos, setTodos] = useState<TodoItem[]>([])
-
-  const handleCreateItem = () => {
-    setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}`, completed }])
-  }
+function TodoList({title, todos, onCreateItem}: TodoListProps) {
 
   return (
     <section>
       <h1>{title}</h1>
       <ul>
-          {todos.map(todo => (
-            <li key={todo.id}>
-              <TodoItem defaultValue={todo.value} defaultCompleted={todo.completed} />
-            </li>
-          ))} 
-          </ul>
-      <button onClick={handleCreateItem}>Add Item</button>
+        {todos.map(todo => (
+          <li key={todo.id}>
+            <TodoItem defaultValue={todo.value} defaultCompleted={todo.completed} />
+          </li>
+        ))} 
+      </ul>
+      <button onClick={() => onCreateItem()}>Add Item</button>
     </section>
   )
 }
