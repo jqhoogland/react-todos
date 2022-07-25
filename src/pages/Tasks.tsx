@@ -2,11 +2,13 @@ import autoAnimate from "@formkit/auto-animate";
 import { UserIcon } from "@heroicons/react/solid";
 import clsx from 'clsx';
 import React, { HTMLProps, useEffect, useRef } from 'react';
+import { Link } from "react-router-dom";
 import { AddButton, IconButton, IconButtonWithDropdown } from "../components/buttons";
 import { ToggleableInput } from "../components/inputs";
 import { Header } from "../components/layout";
 import { defaultTodoItem, priorities, Priority, Status, statuses, TodoItem, User } from "../data";
 import { useTodos, useUsers } from '../hooks';
+import { CogIcon } from '@heroicons/react/solid';
 
 export default function Tasks() {
   const [todos, setTodos] = useTodos()
@@ -210,6 +212,11 @@ function TodoAssignButton({ value, onChangeValue }: TodoAssignButtonProps) {
           </button>
         </li>
       ))}
+      <li>
+        <Link to="/users">
+          <CogIcon className="w-4 h-4"/> Edit users 
+        </Link>
+      </li>
     </IconButtonWithDropdown>
   );
 }

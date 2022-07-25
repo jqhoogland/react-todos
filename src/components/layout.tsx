@@ -1,10 +1,13 @@
 import { PropsWithChildren } from "react"
+import { Link } from "react-router-dom"
 import { ThemeToggle } from "./ThemeProvider"
 
 export function NavBar() {
   return (
     <nav className="fixed w-full bg-base-300 h-20 items-center flex justify-between px-8 z-50">
-      <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
+      <Link to="/">
+        <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
+      </Link>
       <ThemeToggle />
     </nav>
   )
