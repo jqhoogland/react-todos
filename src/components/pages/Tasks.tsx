@@ -1,37 +1,32 @@
 import { useState } from "react"
 import { Header } from "../layout";
-import type { TodoItem } from "../data";
+import { defaultTodoItem, TodoItem } from "../../data";
 import { Status, statuses } from "../../data";
 
 function Tasks() {
     const [todos, setTodos] = useState<TodoItem[]>([])
 
     const handleCreateItem: OnCreateItem = (item = {}) => {
-        setTodos([...todos, { id: todos.length, value: `Todo #${todos.length}`, completed: false, ...item }])
+        setTodos([...todos, { id: todos.length, ...defaultTodoItem, value: `Todo #${todos.length}`, ...item }])
     }
 
     const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
         setTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
     }
 
-    const newTodos = todos.filter(todo => !todo.completed);
-    const completedTodos = todos.filter(todo => todo.completed);
-
-
     return (
         <>
-            <TodoList
-                title="Todos"
-                todos={newTodos}
-                onCreateItem={() => handleCreateItem({ completed: false })}
-                onUpdateItem={handleUpdateItem}
-            />
-            <TodoList
-                title="Completed"
-                todos={completedTodos}
-                onCreateItem={() => handleCreateItem({ completed: true })}
-                onUpdateItem={handleUpdateItem}
-            />
+            {
+                statuses.map(status => (
+                    <TodoList
+                        title={status.label}
+                        todos={todos}
+                        onCreateItem={handleCreateItem}
+                        onUpdateItem={handleUpdateItem}
+                        key={status.value}
+                    />
+                ))
+            }
         </>
     )
 }

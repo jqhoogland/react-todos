@@ -55,7 +55,13 @@ Goals:
 
 ![](public/2-1c.png)
 
-- Change the checkbox into a status selector:
+
+- Convert checkbox -> status select && split the todo list item into:
+    - A span that turns into a text input on click (`<ToggleableInput/>`). (This is what the current list item is).
+    - A status select (to replace the checkbox).
+    - A wrapper for the two of these.
+
+NOTE: You are free to skip prop drilling for now (thereby breaking the status select & text input)
 
 ```ts
 export const statuses = [
@@ -66,6 +72,8 @@ export const statuses = [
   { label: 'Canceled', value: "canceled", icon: "🗑" }
 ];
 ```
+
+- Then change the top level component from a todos & completed list to a separate list for each status.
 
 Goals:
 - Learn how to break apart files into a semisensible structure. (Atomic components is overkill and bad.)
