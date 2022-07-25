@@ -101,14 +101,15 @@ function TaskSectionHeader({ label, count, onCreateItem }: TaskSectionHeaderProp
 }
 
 interface IconButtonWithDropdownProps extends PropsWithChildren {
+  id: string | number,
   icon: React.ReactNode,
 }
 
-function IconButtonWithDropdown({ children, icon }: IconButtonWithDropdownProps) {
+function IconButtonWithDropdown({ id, children, icon }: IconButtonWithDropdownProps) {
   return (
     <div className="dropdown">
-      <IconButton tabIndex={0}>{icon}</IconButton>
-      <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+      <label tabIndex={0} htmlFor={`${id}`}>{icon}</label>
+      <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 opacity-100 hover:opacity-100">
         {children}
       </ul>
     </div>  
@@ -123,10 +124,17 @@ interface TodoStatusButtonProps extends TodoButton {
   value: StatusValue;
 }
 
-function TodoStatusButton({ value }: TodoStatusButtonProps) {
+function TodoStatusButton({ id, value }: TodoStatusButtonProps) {
   return (
-    <IconButtonWithDropdown icon={<div className="checkbox checkbox-xs"/>}>
-
+    <IconButtonWithDropdown id={id}  icon={<div className="checkbox checkbox-xs"/>}>
+      {statuses.map(status => (
+        <li key={status.value}>
+          <button className="flex items-center p-2" onClick={() => console.log(status.value)}>
+            {status.icon}
+            {status.label}
+          </button>
+        </li>
+      ))}              
     </IconButtonWithDropdown>
   )
 }
@@ -141,7 +149,7 @@ function TodoPriorityButton({ id, value }: TodoPriorityButtonProps) {
   }, [value])
 
   return (
-    <IconButtonWithDropdown icon={icon}>
+    <IconButtonWithDropdown id={id} icon={icon}>
 
     </IconButtonWithDropdown>
   )
@@ -165,7 +173,7 @@ function TodoAssignButton({ value }: TodoAssignButtonProps) {
 
 function TodoListItem({ id, value, status, priority, assigned }: TodoItem) {
   return (
-    <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:brightness-110">
+    <li className="flex gap-2 px-4 py-2 justify-between bg-base-200 hover:bg-base-100">
       <span className="flex flex-row items-baseline gap-2">
         <div className="top-1 relative"><TodoStatusButton id={id} value={status} /></div>
         <TodoPriorityButton id={id} value={priority} />
