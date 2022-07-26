@@ -183,6 +183,8 @@ would be more appropriate than doing the same inside a `useLayoutEffect`.
 ## 1. Priority. 
 
 - [x] Let's add priority. Create a `<TodoPrioritySelect/>` and wire it up inside the `<TodoListItem/>`. Get it fully working. Add the following to `data.ts`.
+    - NOTE: (You may have to delete `todos` in localStorage to get everything displaying correctly)
+
 ```ts
 export const priorities = [
   { label: 'Urgent', value: 5, icon: "🔥" },
@@ -190,5 +192,15 @@ export const priorities = [
   { label: 'Medium', value: 3, icon: "🟧" },
   { label: 'Low', value: 2, icon: "🟨" },
   { label: "None", value: 1, icon: "⬜️" },
+]
+```
+
+- [x] Let's add users we can assign todos to. Create a `<TodoUserSelect/>` and wire it up inside the TodoListItem...
+```ts
+export const users = [
+  { id: 0, label: 'Gadisa' },
+  { id: 1, label: 'Mehdi' },
+  { id: 1, label: 'Henk' },
+  { id: 1, label: 'Ayşe' },
 ]
 ```

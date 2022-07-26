@@ -16,12 +16,22 @@ export const priorities = [
 ] as const
 export type Priority = typeof priorities[number];
 
+
+export const users = [
+  { id: 0, label: 'Gadisa' },
+  { id: 1, label: 'Mehdi' },
+  { id: 1, label: 'Henk' },
+  { id: 1, label: 'Ayşe' },
+]
+export type User = typeof users[number];
+
 export interface TodoItem {
   id: number;
   value: string;
   completed: boolean;
   status: Status['value'];
   priority: Priority['value'];
+  assigned?: User['id'];
 }
 export const defaultTodoItem: Omit<TodoItem, "id"> = {
   value: "",
