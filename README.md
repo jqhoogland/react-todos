@@ -232,7 +232,7 @@ function MyCustomComponent({className}) {
     return <div className={"base-class " + className} />
     // OR
     return <div className={["base-class", className].join(" ")} />
-    // ORgits
+    // OR
     return <div className={clsx("base-class", className)} />  // This is great if, for example, `className=undefined` or `null`.
 }
 
@@ -242,7 +242,10 @@ Bonus points for avatar items (but this isn't required).
 
 ![](4-3.mov)
 
-## 4. Deleting items
+### XXX? Deleting items
 
 Add the ability to delete items if you hit delete or backspace & it's empty.
 In retrospect this fits more appropriately with the custom `useTodos` hooks.
+
+
+## 4. Adding routing

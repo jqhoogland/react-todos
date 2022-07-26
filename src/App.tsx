@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { Layout } from "./components/layout";
-import Tasks from "./components/pages/Tasks";
+import { Layout } from "./components/layouts";
+import Tasks from "./pages/Tasks";
 import { ThemeProvider } from "./components/theme";
 
 

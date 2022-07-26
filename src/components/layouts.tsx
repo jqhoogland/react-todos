@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { PropsWithChildren } from "react";
 import { ThemeToggle, useTheme } from "./theme";
 
@@ -55,4 +56,18 @@ export function Footer() {
       </p>
     </div>
   )
+}
+
+interface DropdownProps extends PropsWithChildren {
+  trigger: React.ReactNode
+  className?: string
+}
+
+export function Dropdown({ trigger, children, className }: DropdownProps) {
+  return <div className={clsx("dropdown", className)}>
+    {trigger}
+    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 border-2 border-base-200">
+      {children}
+    </ul>
+  </div>
 }

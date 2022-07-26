@@ -1,19 +1,16 @@
-import { PropsWithChildren, useEffect, useState } from "react"
-import { Header } from "../layout";
-import { defaultTodoItem, TodoItem, defaultTodos, Priority, priorities, User, users } from "../../data";
-import { Status, statuses } from "../../data";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useListMethods, usePersistedState } from "../../hooks";
-import { clsx } from "clsx";
-
+import { Dropdown, Header } from "../components/layouts";
+import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "../data";
+import { useListMethods, usePersistedState } from "../hooks";
+import { ToggleableInput } from "../components/inputs";
 
 
 const useTodos = () => {
-  const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
+const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
   const { create, update, remove } = useListMethods(todos, setAndSaveTodos)
 
   const handleCreateItem: OnCreateItem = (item = {}) => {
-    create({ ...defaultTodoItem, ...item })
+  create({ ...defaultTodoItem, ...item })
   }
 
   return { todos, setAndSaveTodos, handleCreateItem, handleUpdateItem: update, handleDeleteItem: remove }
@@ -111,40 +108,6 @@ function TodoListItem({ value, status, priority, assigned, onUpdateItem, onDelet
 }
 
 
-interface ToggleableInputProps { value: string, onChangeValue: (value: string) => void, onDeleteItem: () => void }
-
-export function ToggleableInput({ value, onChangeValue, onDeleteItem }: ToggleableInputProps) {
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeValue(e.target.value)
-  }
-
-  const handleOpen = () => {
-    setIsEditing(true);
-  };
-
-  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' || e.key === "Escape") {
-      setIsEditing(false)
-    } else if ((e.key === "Backspace" || e.key === "Delete") && e.currentTarget.value === "") {
-      onDeleteItem()
-    }
-  }
-
-  useEffect(() => {
-    if (value === "") {
-      handleOpen()
-    }
-  }, [value])
-
-  if (isEditing) {
-    return <input className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} autoFocus />;
-  }
-
-  return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
-}
-
 interface TodoStatusSelectProps { value: Status['value'], onChangeValue: (value: Status['value']) => void }
 function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
 
@@ -195,7 +158,8 @@ function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
       className="dropdown-end"
       trigger={
         <label className="btn btn-sm py-0 btn-ghost avatar-group -space-x-4 w-28" tabIndex={0}>
-          {initials.map(initial => <div className="avatar rounded-full w-8 h-8 bg-rose-200 text-slate-800 flex justify-center items-center text-center">{initial}</div>) || "👤"}
+          {initials.length === 0 && <span className="text-gray-500">None</span> }
+          {initials.map(initial => <div className="avatar rounded-full w-8 h-8 bg-rose-200 text-slate-800 flex justify-center items-center text-center">{initial}</div>)}
         </label>
       }
     >
@@ -211,16 +175,3 @@ function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
   );
 }
 
-interface DropdownProps extends PropsWithChildren {
-  trigger: React.ReactNode
-  className?: string
-}
-
-function Dropdown({ trigger, children, className }: DropdownProps) {
-  return <div className={clsx("dropdown", className)}>
-    {trigger}
-    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 border-2 border-base-200">
-      {children}
-    </ul>
-  </div>
-}

@@ -27,11 +27,11 @@ export function ThemeToggle() {
     const [isDarkMode, onChangeDarkMode] = useTheme();
 
     const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeDarkMode(e.target.checked)
+        onChangeDarkMode(e.target.checked)
     }
-  
+
     return (
-      <input type="checkbox" onChange={handleCheck} checked={isDarkMode} className="toggle"/>
+        <input type="checkbox" onChange={handleCheck} checked={isDarkMode} className="toggle" />
     )
 }
 
