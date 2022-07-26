@@ -1,5 +1,5 @@
 
-import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 export const ThemeContext = createContext<[boolean, (isDarkMode: boolean) => void]>([false, () => { }]);
 
@@ -10,7 +10,15 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       const theme = isDarkMode ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', theme)
       setIsDarkMode(isDarkMode)
+      localStorage.setItem('theme', theme)
     }
+
+    useEffect(() => {
+        const theme = localStorage.getItem('theme');
+        if (theme) {
+            handleChangeDarkMode(theme === 'dark');
+        }
+    }, [])
 
     return (
         <ThemeContext.Provider value={[isDarkMode, handleChangeDarkMode]}>

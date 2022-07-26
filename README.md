@@ -144,11 +144,10 @@ Goals:
 ## 3. `useEffect` to autofocus better
 
 - [x] When you create a new element, it shows up non-toggled. Ideally, we'd like to create a new element, and automatically open & focus the input & slide it into view.
+- [x] We want to persist the state of our theme, so that it's the same after the page reloads.
 
 This is very little. It probably makes sense to combine into the previous item 
 
-
-## 4. `useCustomHooks` to simplify code & persist state
-
+## 4. `useCustomEffect` to 
 - [x] First of all, let's take advantage of `autoFocus` to get rid of some excess code. 
 - [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the idea of custom hooks without having to write a custom hook yourself.
