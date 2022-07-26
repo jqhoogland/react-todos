@@ -146,6 +146,7 @@ Goals:
 - [x] When you create a new element, it shows up non-toggled. Ideally, we'd like to create a new element, and automatically open & focus the input & slide it into view.
 - [x] We want to persist the state of our theme, so that it's the same after the page reloads.
 - [x] We want to avoid FOUC (flash of unstyle content) so we use `useLayoutEffect` instead.
+- [x] We want to persist the todos to local storage as well. Let's start by writing out the code inside the `<Tasks/>` element.
 
 - A small theoretical section on `useEffect`:
   - A major note of caution: `useEffect` should be used as a last resort. Side-effects belong in event handlers not as a consequence of special renders.
@@ -170,5 +171,5 @@ would be more appropriate than doing the same inside a `useLayoutEffect`.
 ## 4. `useCustomEffect` to persist state in multiple places & explain ourselves better
 - [x] First of all, let's take advantage of `autoFocus` to get rid of some excess code. 
 - [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the idea of custom hooks without having to write a custom hook yourself.
-- [x] We want to persist the todos to local storage as well. Let's start by writing out the code inside the `<Tasks/>` element.
-- [x] Now let's extract it into its own hook. For now, this serves to make it more legible.
+- [x] Let's start by extracting a `useTheme = () => useContext(ThemeContext)` hook. (Out of order)
+- [x] Now let's extract the tasks logic into its own hook. For now, this serves to make it more legibl
