@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Dropdown, Header } from "../components/layouts";
-import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "../data";
+import { TodoItem, User } from "../data";
 import { useListMethods, usePersistedState } from "../hooks";
 import { ToggleableInput } from "../components/inputs";
 
@@ -9,9 +9,20 @@ type OnCreateItem = (item?: Partial<TodoItem>) => void
 type OnUpdateItem = (id: TodoItem['id'], item: Partial<TodoItem>) => void;
 type OnDeleteItem = (id: TodoItem['id']) => void
 
+const useUsers = () => {
+  const [users, setAndSaveUsers] = usePersistedState<User[]>('users', [])
+  const { create, update, remove } = useListMethods(users, setAndSaveUsers)
+
+  const handleCreateUser: OnCreateItem = (item = {}) => {
+    create({ name: "", ...item })
+  }
+
+  return { users, setAndSaveUsers, handleCreateUser, handleUpdateUser: update, handleDeleteUser: remove }
+}
+
 
 function Tasks() {
-  // const { todos, handleCreateItem, handleUpdateItem, handleDeleteItem } = useTodos()
+  const {users, handleCreateUser, handleUpdateUser, handleDeleteUser} = useUsers()
   const [parentRef] = useAutoAnimate<HTMLUListElement>()
 
   return (
