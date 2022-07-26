@@ -118,8 +118,11 @@ NOTE: 2.2 is quite a lot of work in comparison to these two — maybe we can spl
 
 - [x] Add a checkbox to the right of the navbar for enabling dark mode. Also add DaisyUI because it makes themes a little easier (all you have to do is replace `bg-white` with `bg-base-100`).
    - This involves changing attributes on `<html/>` so a diagram will be helpful. (This previews what we're about to do with state).
-- [ ] Let's add a footer that displays a moon or sun emoji depending on the theme. We have to lift state up to `<App/>`. Oof. Also, changing the DOM directly is not very React, so there's a good "theoretical" reason to do this!
-- [ ] Extract the state to a `<ThemeProvider/>` and remove prop-drilling in favor of context.
+- [x] Let's add a footer that displays a moon or sun emoji depending on the theme. We have to lift state up to `<Layout/>`. Oof. Also, changing the DOM directly is not very React, so there's a good "theoretical" reason to do this!
+- [x] Extract the state to a `<ThemeProvider/>` and remove prop-drilling in favor of context.
+    - Show that this gets a little easier with prop spreading.
+    - To show how much nicer this is, put a `<ThemeToggle/>` inside each of the todo items. Doing this with drilling would have meant raising the state to `<App/>`, then passing it down all the way. No thanks.
+- [x] Make it look a little prettier. Take advantage of Daisyui's component-style classes (`.btn` for the add button, `.input` for the toggleable input, `.select` for the select, `.bg-base-[100,200,300]`, `.border-base-[100,200,300]`, and `.toggle` for the switch. Also useful are modifiers `.[btn,input,select,...]-[xs,sm,...]`, and `.[btn,input,...]-bordered`).
 
 Goals:
 - Actually learn the word "prop-drilling". Are you exhausted yet having to repeatedly type the same props you pass down again and again? It gets easy with the spread operator, but it's still annoying!

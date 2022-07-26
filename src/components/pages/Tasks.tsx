@@ -49,10 +49,12 @@ interface TodoListProps {
 function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoListProps) {
     return (
         <section>
-            <Header action={<button onClick={() => onCreateItem({status})}>+</button>}>
+        <Header action={
+          <button onClick={() => onCreateItem({ status })} className="btn btn-xs btn-ghost">+</button>
+        }>
                 <h2 className="text-xl font-bold">{title}</h2>
             </Header>
-            <ul className="space-y-2 px-4">
+            <ul className="space-y-2 p-4">
                 {todos.map(todo => (
                     <li key={todo.id}>
                         <TodoListItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
@@ -76,7 +78,6 @@ function TodoListItem({  value, status, onUpdateItem }: TodoItemProps) {
           <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
         </span>
         <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
-        <ThemeToggle/>
       </li>
     )   
 }
@@ -102,7 +103,7 @@ export function ToggleableInput({ value, onChangeValue}: ToggleableInputProps) {
   }
 
   if (isEditing) {
-      return <input className="px-2 flex border-2 rounded-lg w-full" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
+      return <input className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
   }
 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
@@ -115,7 +116,7 @@ function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
     }
 
     return (
-        <select className="border-2 rounded-lg py-0.5" value={value} onChange={ handleChange}>
+        <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={ handleChange}>
         {statuses.map(status => (
           <option key={status.value} value={status.value}>
             <span>{status.icon}</span>{" "}

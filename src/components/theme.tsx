@@ -28,6 +28,6 @@ export function ThemeToggle() {
     }
   
     return (
-      <input type="checkbox" onChange={handleCheck} checked={isDarkMode} />
+      <input type="checkbox" onChange={handleCheck} checked={isDarkMode} className="toggle"/>
     )
   }
