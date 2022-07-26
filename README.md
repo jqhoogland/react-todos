@@ -208,12 +208,14 @@ export const users = [
   { id: 1, label: 'Ayşe' },
 ]
 ```
+![](4-2.mov)
 
 ## 2b. Multiple users
 
-![](4-2.mov)
-
 - [x] But what if we want multiple users? You will definitely want to delete `todos` from localStorage (and include `assigned: []` in your new list of defaults )
 
+![](4-2b.mov)
 
-## 3. 
+## 3. Let's make it pretty
+
+- Make a `<Dropdown/>` component (on top of [this](https://daisyui.com/components/dropdown/)) to free up some space in the todo list. Put the multiselect inside of it and display a button of initial avatars instead.

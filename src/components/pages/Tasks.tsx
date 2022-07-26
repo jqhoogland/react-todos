@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { PropsWithChildren, useEffect, useState } from "react"
 import { Header } from "../layout";
 import { defaultTodoItem, TodoItem, defaultTodos, Priority, priorities, User, users } from "../../data";
 import { Status, statuses } from "../../data";
@@ -178,15 +178,30 @@ function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
     onChangeValue(parseInt(e.target.value) as User['id']);
   }
   const stringifiedAssigned = value.map(value => value.toString());
+  const names = value.map(userId => users.find(user => user.id === userId)?.name[0]);
 
   return (
-    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={stringifiedAssigned} onChange={handleChange} multiple>
-      {users.map(user => (
-        <option key={user.id} value={user.id}>
-          {user.name}
-        </option>
-      ))}
-    </select>
+    <Dropdown trigger={<label className="btn btn-xs btn-ghost w-20" tabIndex={0}>{names.join(", ")}</label>}>
+      <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={stringifiedAssigned} onChange={handleChange} multiple>
+        {users.map(user => (
+          <option key={user.id} value={user.id}>
+            {user.name}
+          </option>
+        ))}
+      </select>
+    </Dropdown>
   );
 }
 
+interface DropdownProps extends PropsWithChildren {
+  trigger: React.ReactNode
+}
+
+function Dropdown({ trigger, children }: DropdownProps) {
+  return <div className="dropdown">
+    {trigger}
+    <div tabIndex={0}  className="dropdown-content">
+      {children}
+    </div>
+  </div>
+}
