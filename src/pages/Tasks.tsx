@@ -1,9 +1,10 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Dropdown, Header } from "../components/layouts";
-import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "../data";
+import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User } from "../data";
 import { useListMethods, usePersistedState } from "../hooks";
 import { ToggleableInput } from "../components/inputs";
 import { Link } from "react-router-dom";
+import { useUsers } from "./Users";
 
 
 const useTodos = () => {
@@ -152,6 +153,8 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
 
 interface TodoAssignedSelectProps { value: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
+  const { users }  = useUsers()
+
   const initials = value.map(userId => users.find(user => user.id === userId)?.name[0]);
 
   return (

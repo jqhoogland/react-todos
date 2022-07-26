@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Dropdown, Header } from "../components/layouts";
-import { TodoItem, User } from "../data";
+import { defaultUsers, TodoItem, User } from "../data";
 import { useListMethods, usePersistedState } from "../hooks";
 import { ToggleableInput } from "../components/inputs";
 
@@ -9,8 +9,8 @@ type OnCreateItem = (item?: Partial<TodoItem>) => void
 type OnUpdateItem = (id: TodoItem['id'], item: Partial<TodoItem>) => void;
 type OnDeleteItem = (id: TodoItem['id']) => void
 
-const useUsers = () => {
-  const [users, setAndSaveUsers] = usePersistedState<User[]>('users', [])
+export const useUsers = () => {
+  const [users, setAndSaveUsers] = usePersistedState<User[]>('users', defaultUsers)
   const { create, update, remove } = useListMethods(users, setAndSaveUsers)
 
   const handleCreateUser: OnCreateItem = () => {

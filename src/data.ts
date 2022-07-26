@@ -17,13 +17,13 @@ export const priorities = [
 export type Priority = typeof priorities[number];
 
 
-export const users = [
+export const defaultUsers = [
   { id: 0, name: 'Gadisa' },
   { id: 1, name: 'Mehdi' },
   { id: 2, name: 'Henk' },
   { id: 3, name: 'Ayşe' },
 ]
-export type User = typeof users[number];
+export type User = typeof defaultUsers[number];
 
 export interface TodoItem {
   id: number;
