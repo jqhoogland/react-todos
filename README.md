@@ -147,8 +147,27 @@ Goals:
 - [x] We want to persist the state of our theme, so that it's the same after the page reloads.
 - [x] We want to avoid FOUC (flash of unstyle content) so we use `useLayoutEffect` instead.
 
-This is very little. It probably makes sense to combine into the previous item 
+- A small theoretical section on `useEffect`:
+  - A major note of caution: `useEffect` should be used as a last resort. Side-effects belong in event handlers not as a consequence of special renders.
+
+
+```tsx
+function loadDarkMode() {
+    const theme = localStorage.getItem('theme')
+    document.documentElement.setAttribute('data-theme', theme ?? 'light')
+    return theme === 'dark'
+}
+
+export function ThemeProvider({ children }: PropsWithChildren) {
+    const [isDarkMode, setIsDarkMode] = useState(loadDarkMode);
+    
+    // ...
+}
+```
+
+would be more appropriate than doing the same inside a `useLayoutEffect`.
 
 ## 4. `useCustomEffect` to persist state in multiple places & explain ourselves better
 - [x] First of all, let's take advantage of `autoFocus` to get rid of some excess code. 
-- [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the igi
+- [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the idea of custom hooks without having to write a custom hook yourself.
+- [x] We want to persist 
