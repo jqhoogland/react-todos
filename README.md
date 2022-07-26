@@ -151,4 +151,4 @@ This is very little. It probably makes sense to combine into the previous item
 
 ## 4. `useCustomEffect` to persist state in multiple places & explain ourselves better
 - [x] First of all, let's take advantage of `autoFocus` to get rid of some excess code. 
-- [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the idea of custom hooks without having to write a custom hook yourself.
+- [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the igi
