@@ -4,6 +4,7 @@ import { defaultTodoItem, TodoItem, defaultTodos, Priority, priorities, User, us
 import { Status, statuses } from "../../data";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useListMethods, usePersistedState } from "../../hooks";
+import { clsx } from "clsx";
 
 
 
@@ -180,7 +181,12 @@ function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
   const names = value.map(userId => users.find(user => user.id === userId)?.name[0]);
 
   return (
-    <Dropdown trigger={<label className="btn btn-xs btn-ghost w-20" tabIndex={0}>{names.join(", ")}</label>}>
+    <Dropdown
+      className="dropdown-end"
+      trigger={
+        <label className="btn btn-xs btn-ghost w-20" tabIndex={0}>{names.join(", ") || "👤"}</label>
+      }
+    >
       <li className="menu-title"><span>Assigned</span></li>
       {users.map(user => (
         <li key={user.id} className={value.includes(user.id) ? "bg-base-200" : ""}>
@@ -195,10 +201,11 @@ function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
 
 interface DropdownProps extends PropsWithChildren {
   trigger: React.ReactNode
+  className?: string
 }
 
-function Dropdown({ trigger, children }: DropdownProps) {
-  return <div className="dropdown">
+function Dropdown({ trigger, children, className }: DropdownProps) {
+  return <div className={clsx("dropdown", className)}>
     {trigger}
     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 border-2 border-base-200">
       {children}
