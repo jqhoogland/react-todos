@@ -81,12 +81,22 @@ interface TodoItemProps extends TodoItem {
 }
 
 function TodoListItem({ value, status, priority, assigned, onUpdateItem }: TodoItemProps) {
+
+  const handleToggleAssigned = (userId: User['id']) => {
+    console.log(assigned, userId)
+    if (assigned.includes(userId)) {
+      onUpdateItem({ assigned: assigned.filter(uid => uid !== userId) })
+    } else {
+      onUpdateItem({assigned: [ ...assigned, userId]})
+    }
+  }
+
   return (
     <li className="flex gap-2">
       <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
       <TodoPrioritySelect value={priority} onChangeValue={priority => onUpdateItem({ priority })} />
       <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
-      <TodoAssignedSelect value={assigned} onChangeValue={assigned => onUpdateItem({assigned})} />
+      <TodoAssignedSelect value={assigned} onChangeValue={handleToggleAssigned} />
     </li>
   )
 }
@@ -162,14 +172,14 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
 }
 
 
-interface TodoAssignedSelectProps { value?: User['id'], onChangeValue: (value: User['id']) => void }
+interface TodoAssignedSelectProps { value?: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChangeValue(parseInt(e.target.value) as User['id'])
+    onChangeValue(parseInt(e.target.value) as User['id']);
   }
 
   return (
-    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange}>
+    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange} multiple>
       <option value={undefined}>
         None
       </option>

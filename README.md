@@ -207,3 +207,5 @@ export const users = [
 ```
 
 ![](4-2.mov)
+
+- [x] But what if we want multiple users? You will definitely want to delete `todos` from localStorage (and include `assigned: []` in your new list of defaults )
