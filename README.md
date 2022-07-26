@@ -145,4 +145,9 @@ Goals:
 
 - [x] When you create a new element, it shows up non-toggled. Ideally, we'd like to create a new element, and automatically open & focus the input & slide it into view.
 
-This is very little. It probably makes sense to combine into the previous item
+This is very little. It probably makes sense to combine into the previous item 
+
+
+## 4. `useCustomHooks` to simplify code & persist state
+
+- [x] First of all, let's take advantage of `autoFocus` to get rid of some excess code. 

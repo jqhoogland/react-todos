@@ -96,7 +96,6 @@ function TodoListItem({ value, status, onUpdateItem }: TodoItemProps) {
 interface ToggleableInputProps { value: string, onChangeValue: (value: string) => void }
 
 export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) {
-  const ref = useRef<HTMLInputElement | null>(null)
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,19 +113,13 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
   }
 
   useEffect(() => {
-    if (isEditing) {
-      ref.current?.focus?.()
-    }
-  }, [isEditing])
-
-  useEffect(() => {
     if (value === "") {
       handleOpen()
     }
   }, [value])
 
   if (isEditing) {
-    return <input ref={ref} className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
+    return <input className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} autoFocus/>;
   }
 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
