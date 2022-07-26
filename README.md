@@ -129,3 +129,7 @@ Goals:
 - Understand `useContext`, `Providers`
 - Introduction to the render cycle. 
 - When to use `useContext` and when not to use `useContext` (most of the time). Alternatives (smart use of children).
+
+![](3-1.mov)
+
+## 2. `useRef` to autofocus the input when you open the toggleable input.
