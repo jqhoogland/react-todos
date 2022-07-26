@@ -1,5 +1,5 @@
-import { PropsWithChildren, useContext, useState } from "react"
-import { ThemeToggle, ThemeContext } from "./theme";
+import { PropsWithChildren } from "react";
+import { ThemeToggle, useTheme } from "./theme";
 
 
 export function NavBar() {
@@ -41,7 +41,7 @@ export function Layout({ children }: PropsWithChildren) {
 
 
 export function Footer() {
-  const [isDarkMode] = useContext(ThemeContext)
+  const [isDarkMode] = useTheme();
 
   return (
     <div className="h-40 flex flex-col place-items-center p-10">

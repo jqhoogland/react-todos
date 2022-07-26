@@ -3,6 +3,9 @@ import { createContext, PropsWithChildren, useContext, useEffect, useLayoutEffec
 
 export const ThemeContext = createContext<[boolean, (isDarkMode: boolean) => void]>([false, () => { }]);
 
+
+
+
 export function ThemeProvider({ children }: PropsWithChildren) {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -29,7 +32,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
 
 export function ThemeToggle() {
-    const [isDarkMode, onChangeDarkMode] = useContext(ThemeContext);
+    const [isDarkMode, onChangeDarkMode] = useTheme();
 
     const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
       onChangeDarkMode(e.target.checked)
@@ -38,4 +41,8 @@ export function ThemeToggle() {
     return (
       <input type="checkbox" onChange={handleCheck} checked={isDarkMode} className="toggle"/>
     )
-  }
+}
+
+export function useTheme() {
+    return useContext(ThemeContext);
+}
