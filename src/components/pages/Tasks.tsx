@@ -172,17 +172,15 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
 }
 
 
-interface TodoAssignedSelectProps { value?: User['id'][], onChangeValue: (value: User['id']) => void }
+interface TodoAssignedSelectProps { value: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChangeValue(parseInt(e.target.value) as User['id']);
   }
+  const stringifiedAssigned = value.map(value => value.toString());
 
   return (
-    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange} multiple>
-      <option value={undefined}>
-        None
-      </option>
+    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={stringifiedAssigned} onChange={handleChange} multiple>
       {users.map(user => (
         <option key={user.id} value={user.id}>
           {user.name}

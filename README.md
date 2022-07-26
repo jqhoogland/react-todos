@@ -194,7 +194,10 @@ export const priorities = [
   { label: "None", value: 1, icon: "⬜️" },
 ]
 ```
+
 ![](4-1.mov)
+
+## 2. Users
 
 - [x] Let's add users we can assign todos to. Create a `<TodoUserSelect/>` and wire it up inside the TodoListItem... Make sure to add a fallback in case nobody has been assigned!
 ```ts
@@ -206,6 +209,11 @@ export const users = [
 ]
 ```
 
+## 2b. Multiple users
+
 ![](4-2.mov)
 
 - [x] But what if we want multiple users? You will definitely want to delete `todos` from localStorage (and include `assigned: []` in your new list of defaults )
+
+
+## 3. 
