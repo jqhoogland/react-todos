@@ -44,6 +44,7 @@ export function Layout({ children }: PropsWithChildren) {
   const handleChangeDarkMode = (isDarkMode: boolean) => {
     const theme = isDarkMode ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', theme)
+    setIsDarkMode(isDarkMode)
   }
 
   return (
