@@ -219,3 +219,22 @@ export const users = [
 ## 3. Let's make it pretty
 
 - Make a `<Dropdown/>` component (on top of [this](https://daisyui.com/components/dropdown/)) to free up some space in the todo list. Put the multiselect inside of it and display a button of initial avatars instead.
+- Can you make it look like what you see in the video?
+
+Tip: 
+- If you want the dropdown on the right to align correctly, you'll have to pass it the `.dropdown-end` class. How to do this with nested components? Check out the library `clsx`.
+
+```jsx
+
+const myComponent = <MyCustomComponent className="my-classname"/>;
+
+function MyCustomComponent({className}) {
+    return <div className={"base-class " + className} />
+    // OR
+    return <div className={["base-class", className].join(" ")} />
+    // ORgits
+    return <div className={clsx("base-class", className)} />  // This is great if, for example, `className=undefined` or `null`.
+}
+
+```
+
