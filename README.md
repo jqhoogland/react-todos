@@ -196,7 +196,7 @@ export const priorities = [
 ```
 ![](4-1.mov)
 
-- [x] Let's add users we can assign todos to. Create a `<TodoUserSelect/>` and wire it up inside the TodoListItem...
+- [x] Let's add users we can assign todos to. Create a `<TodoUserSelect/>` and wire it up inside the TodoListItem... Make sure to add a fallback in case nobody has been assigned!
 ```ts
 export const users = [
   { id: 0, label: 'Gadisa' },
@@ -205,3 +205,5 @@ export const users = [
   { id: 1, label: 'Ayşe' },
 ]
 ```
+
+![](4-2.mov)
