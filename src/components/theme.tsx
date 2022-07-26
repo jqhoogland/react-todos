@@ -1,5 +1,5 @@
 
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useLayoutEffect, useState } from 'react';
 
 export const ThemeContext = createContext<[boolean, (isDarkMode: boolean) => void]>([false, () => { }]);
 
@@ -13,7 +13,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       localStorage.setItem('theme', theme)
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const theme = localStorage.getItem('theme');
         if (theme) {
             handleChangeDarkMode(theme === 'dark');
