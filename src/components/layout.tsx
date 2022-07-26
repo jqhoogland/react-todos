@@ -1,31 +1,19 @@
-import { PropsWithChildren, useState } from "react"
+import { PropsWithChildren, useContext, useState } from "react"
+import { ThemeToggle, ThemeContext } from "./theme";
 
-interface NavBarProps {
-  isDarkMode: boolean;
-  onChangeDarkMode: (isDarkMode: boolean) => void;
-}
 
-export function NavBar(props: NavBarProps) {
+export function NavBar() {
   return (
     <nav className="fixed w-full h-20 items-center flex justify-between px-8 z-50 border-b-2 bg-base-100">
       <a href="/">
         <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
       </a>
 
-      <ThemeToggle {...props}  />
+      <ThemeToggle  />
     </nav>
   )
 }
 
-function ThemeToggle({isDarkMode, onChangeDarkMode}: NavBarProps) {
-  const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeDarkMode(e.target.checked)
-  }
-
-  return (
-    <input type="checkbox" onChange={handleCheck} checked={isDarkMode} />
-  )
-}
 
 export function Header({ children, action }: PropsWithChildren<{ action: React.ReactNode }>) {
   return (
@@ -38,35 +26,27 @@ export function Header({ children, action }: PropsWithChildren<{ action: React.R
   )
 }
 
+
 export function Layout({ children }: PropsWithChildren) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  const handleChangeDarkMode = (isDarkMode: boolean) => {
-    const theme = isDarkMode ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', theme)
-    setIsDarkMode(isDarkMode)
-  }
-
   return (
     <>
-      <NavBar isDarkMode={isDarkMode} onChangeDarkMode={handleChangeDarkMode} />
+      <NavBar />
       <main className="min-h-screen h-full pt-20">
         {children}
       </main>
-      <Footer isDarkMode={isDarkMode} />
+      <Footer />
     </>
   )
 }
 
-interface FooterProps {
-  isDarkMode: boolean
-}
 
-export function Footer({ isDarkMode }: FooterProps) {
+export function Footer() {
+  const [isDarkMode] = useContext(ThemeContext)
+
   return (
     <div className="h-40 flex flex-col place-items-center p-10">
       <p className="text-center text-sm w-full">
-        Made in {
+        Made with {
           isDarkMode ? '🌚' : '🌝'
         }
       </p>

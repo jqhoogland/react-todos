@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Header } from "../layout";
 import { defaultTodoItem, TodoItem , defaultTodos} from "../../data";
 import { Status, statuses } from "../../data";
+import { ThemeToggle } from "../theme";
 
 function Tasks() {
     const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
@@ -72,9 +73,10 @@ function TodoListItem({  value, status, onUpdateItem }: TodoItemProps) {
     return (
       <li className="flex">
         <span className="pr-4">
-                <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({status})} />
+          <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
         </span>
-        <ToggleableInput value={value} onChangeValue={value => onUpdateItem({value})} />
+        <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
+        <ThemeToggle/>
       </li>
     )   
 }
