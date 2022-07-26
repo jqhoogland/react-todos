@@ -237,4 +237,10 @@ function MyCustomComponent({className}) {
 }
 
 ```
+Bonus points for avatar items (but this isn't required).
+
+
+![](4-3.mov)
+
+## 4. Deleting items
 

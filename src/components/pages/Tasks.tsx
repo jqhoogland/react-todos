@@ -178,13 +178,15 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
 
 interface TodoAssignedSelectProps { value: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
-  const names = value.map(userId => users.find(user => user.id === userId)?.name[0]);
+  const initials = value.map(userId => users.find(user => user.id === userId)?.name[0]);
 
   return (
     <Dropdown
       className="dropdown-end"
       trigger={
-        <label className="btn btn-xs btn-ghost w-20" tabIndex={0}>{names.join(", ") || "👤"}</label>
+        <label className="btn btn-sm py-0 btn-ghost avatar-group -space-x-4 w-28" tabIndex={0}>
+          {initials.map(initial => <div className="avatar rounded-full w-8 h-8 bg-rose-200 text-slate-800 flex justify-center items-center text-center">{initial}</div>) || "👤"}
+        </label>
       }
     >
       <li className="menu-title"><span>Assigned</span></li>
