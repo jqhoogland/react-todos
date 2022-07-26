@@ -249,3 +249,11 @@ In retrospect this fits more appropriately with the custom `useTodos` hooks.
 
 
 ## 4. Adding routing
+
+- [x] Clean up the file structure a little
+- [x] Install react-router & react-router-dom. Wrap `<App/>` in `main.tsx` with `<BrowserRouter/>`. Put `<Routes>...</Routes>` in the `App.tsx`. 
+- [x] Add a `<Users/>` page. Let it display a list of users (and a header with the title "Users").
+- [x] Add a `useUsers` hook, based off of the `useTodos` hook. Link it to state
+- [x] Link the original `<TodoAssignedSelect/>` component to useUsers
+
+Make sure to emphasize the sense in which this is not a typical hook. It uses localStorage to synchronize state. That means it won't actually update in real time & only makes sense on different routes. 
