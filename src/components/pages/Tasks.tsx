@@ -1,37 +1,38 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Header } from "../layout";
-import { defaultTodoItem, TodoItem , defaultTodos} from "../../data";
+import { defaultTodoItem, TodoItem, defaultTodos } from "../../data";
 import { Status, statuses } from "../../data";
 import { ThemeToggle } from "../theme";
 import { flushSync } from "react-dom";
+import autoAnimate from "@formkit/auto-animate";
 
 function Tasks() {
-    const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
+  const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
 
-    const handleCreateItem: OnCreateItem = (item = {}) => {
-        setTodos([...todos, { id: todos.length, ...defaultTodoItem, value: `Todo #${todos.length}`, ...item }])
-    }
+  const handleCreateItem: OnCreateItem = (item = {}) => {
+    setTodos([...todos, { id: todos.length, ...defaultTodoItem, value: `Todo #${todos.length}`, ...item }])
+  }
 
-    const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
-        setTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
-    }
+  const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
+    setTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
+  }
 
-    return (
-        <>
-            {
-                statuses.map(status => (
-                    <TodoList
-                        title={status.label}
-                        status={status.value}
-                        todos={todos.filter(todo => todo.status === status.value)}
-                        onCreateItem={handleCreateItem}
-                        onUpdateItem={handleUpdateItem}
-                        key={status.value}
-                    />
-                ))
-            }
-        </>
-    )
+  return (
+    <>
+      {
+        statuses.map(status => (
+          <TodoList
+            title={status.label}
+            status={status.value}
+            todos={todos.filter(todo => todo.status === status.value)}
+            onCreateItem={handleCreateItem}
+            onUpdateItem={handleUpdateItem}
+            key={status.value}
+          />
+        ))
+      }
+    </>
+  )
 }
 
 export default Tasks;
@@ -40,47 +41,55 @@ type OnCreateItem = (item?: Partial<TodoItem>) => void
 type OnUpdateItem = (id: TodoItem['id'], item?: Partial<TodoItem>) => void;
 
 interface TodoListProps {
-    todos: TodoItem[];
-    status: Status['value'];
-    title: string
-    onCreateItem: OnCreateItem
-    onUpdateItem: OnUpdateItem
+  todos: TodoItem[];
+  status: Status['value'];
+  title: string
+  onCreateItem: OnCreateItem
+  onUpdateItem: OnUpdateItem
 }
 
 function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoListProps) {
-    return (
-        <section>
-        <Header action={
-          <button onClick={() => onCreateItem({ status })} className="btn btn-xs btn-ghost">+</button>
-        }>
-                <h2 className="text-xl font-bold">{title}</h2>
-            </Header>
-            <ul className="space-y-2 p-4">
-                {todos.map(todo => (
-                    <li key={todo.id}>
-                        <TodoListItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
-                    </li>
-                ))}
-            </ul>
-        </section>
-    )
+  const parentRef = useRef<HTMLUListElement | null>(null);
+
+  useEffect(() => {
+    if (parentRef.current) {
+      autoAnimate(parentRef.current)
+    } 
+  }, [parentRef])
+
+  return (
+    <section>
+      <Header action={
+        <button onClick={() => onCreateItem({ status })} className="btn btn-xs btn-ghost">+</button>
+      }>
+        <h2 className="text-xl font-bold">{title}</h2>
+      </Header>
+      <ul className="space-y-2 p-4" ref={parentRef}>
+        {todos.map(todo => (
+          <li key={todo.id}>
+            <TodoListItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
 }
 
 interface TodoItemProps {
-    value: string
-    status: Status['value'];
-    onUpdateItem: (item: Partial<TodoItem>) => void
+  value: string
+  status: Status['value'];
+  onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoListItem({  value, status, onUpdateItem }: TodoItemProps) {
-    return (
-      <li className="flex">
-        <span className="pr-4">
-          <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
-        </span>
-        <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
-      </li>
-    )   
+function TodoListItem({ value, status, onUpdateItem }: TodoItemProps) {
+  return (
+    <li className="flex">
+      <span className="pr-4">
+        <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
+      </span>
+      <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
+    </li>
+  )
 }
 
 
@@ -93,13 +102,13 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChangeValue(e.target.value)
   }
-    
+
   const handleOpen = () => {
     setIsEditing(true);
-    flushSync(() => {})
+    flushSync(() => { })
     ref.current?.focus?.()
   };
-    
+
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === "Escape") {
       setIsEditing(false)
@@ -113,20 +122,20 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
 }
 
-interface TodoStatusSelectProps  {value: Status['value'], onChangeValue: (value: Status['value']) => void}
+interface TodoStatusSelectProps { value: Status['value'], onChangeValue: (value: Status['value']) => void }
 function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChangeValue(e.target.value as Status['value'])
-    }
-
-    return (
-        <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={ handleChange}>
-        {statuses.map(status => (
-          <option key={status.value} value={status.value}>
-            <span>{status.icon}</span>{" "}
-            {status.label}
-          </option>
-        ))}
-      </select>
-    );
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChangeValue(e.target.value as Status['value'])
   }
+
+  return (
+    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange}>
+      {statuses.map(status => (
+        <option key={status.value} value={status.value}>
+          <span>{status.icon}</span>{" "}
+          {status.label}
+        </option>
+      ))}
+    </select>
+  );
+}
