@@ -143,4 +143,6 @@ Goals:
 
 ## 3. `useEffect` to autofocus better
 
-- [ ] When you create a new element, it shows up non-toggled. Ideally, we'd like to create a new element, and automatically open & focus the input & slide it into view.
+- [x] When you create a new element, it shows up non-toggled. Ideally, we'd like to create a new element, and automatically open & focus the input & slide it into view.
+
+This is very little. It probably makes sense to combine into the previous item

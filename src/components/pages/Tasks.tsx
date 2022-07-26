@@ -10,7 +10,7 @@ function Tasks() {
   const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
 
   const handleCreateItem: OnCreateItem = (item = {}) => {
-    setTodos([...todos, { id: todos.length, ...defaultTodoItem, value: `Todo #${todos.length}`, ...item }])
+    setTodos([...todos, { id: todos.length, ...defaultTodoItem, ...item }])
   }
 
   const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
@@ -118,6 +118,12 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
       ref.current?.focus?.()
     }
   }, [isEditing])
+
+  useEffect(() => {
+    if (value === "") {
+      handleOpen()
+    }
+  }, [value])
 
   if (isEditing) {
     return <input ref={ref} className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
