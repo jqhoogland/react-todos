@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Header } from "../layout";
-import { defaultTodoItem, TodoItem, defaultTodos } from "../../data";
+import { defaultTodoItem, TodoItem, defaultTodos, Priority, priorities } from "../../data";
 import { Status, statuses } from "../../data";
 import {useAutoAnimate} from "@formkit/auto-animate/react";
 import { useListMethods, usePersistedState } from "../../hooks";
@@ -77,15 +77,15 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoList
 interface TodoItemProps {
   value: string
   status: Status['value'];
+  priority: Priority['value'];
   onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoListItem({ value, status, onUpdateItem }: TodoItemProps) {
+function TodoListItem({ value, status, priority, onUpdateItem }: TodoItemProps) {
   return (
-    <li className="flex">
-      <span className="pr-4">
-        <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
-      </span>
+    <li className="flex gap-2">
+      <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
+      <TodoPrioritySelect value={priority} onChangeValue={priority => onUpdateItem({ priority })} />
       <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
     </li>
   )
@@ -141,3 +141,23 @@ function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
     </select>
   );
 }
+
+
+interface TodoPrioritySelectProps { value: Priority['value'], onChangeValue: (value: Priority['value']) => void }
+function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChangeValue(parseInt(e.target.value) as Priority['value'])
+  }
+
+  return (
+    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange}>
+      {priorities.map(priority => (
+        <option key={priority.value} value={priority.value}>
+          <span>{priority.icon}</span>{" "}
+          {priority.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+

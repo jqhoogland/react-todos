@@ -176,3 +176,19 @@ would be more appropriate than doing the same inside a `useLayoutEffect`.
 - [x] In light of the single responsibility principle, can we extract the specific function of `useState` + local storage? 
 - [x] What about the list-methods that we need in todos. We're likely to need those in the future.
     - In hindsight this is probably too difficult, and it's not obvious what the value is. First, introduce users and why we need this.
+
+
+# 4. Finishing & launching the application
+
+## 1. Priority. 
+
+- [x] Let's add priority. Create a `<TodoPrioritySelect/>` and wire it up inside the `<TodoListItem/>`. Get it fully working. Add the following to `data.ts`.
+```ts
+export const priorities = [
+  { label: 'Urgent', value: 5, icon: "🔥" },
+  { label: 'High', value: 4, icon: "🟥" },
+  { label: 'Medium', value: 3, icon: "🟧" },
+  { label: 'Low', value: 2, icon: "🟨" },
+  { label: "None", value: 1, icon: "⬜️" },
+]
+```
