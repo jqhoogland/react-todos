@@ -2,24 +2,24 @@ import { PropsWithChildren, useState } from "react"
 
 interface NavBarProps {
   isDarkMode: boolean;
+  onChangeDarkMode: (isDarkMode: boolean) => void;
 }
 
-export function NavBar({isDarkMode}: NavBarProps) {
+export function NavBar({isDarkMode, onChangeDarkMode}: NavBarProps) {
   return (
     <nav className="fixed w-full h-20 items-center flex justify-between px-8 z-50 border-b-2 bg-base-100">
       <a href="/">
         <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
       </a>
 
-      <ThemeToggle isDarkMode={isDarkMode}  />
+      <ThemeToggle isDarkMode={isDarkMode} onChangeDarkMode={onChangeDarkMode} />
     </nav>
   )
 }
 
-function ThemeToggle({isDarkMode}: NavBarProps) {
+function ThemeToggle({isDarkMode, onChangeDarkMode}: NavBarProps) {
   const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const theme = e.target.checked ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', theme)
+    onChangeDarkMode(e.target.checked)
   }
 
   return (
@@ -41,9 +41,14 @@ export function Header({ children, action }: PropsWithChildren<{ action: React.R
 export function Layout({ children }: PropsWithChildren) {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  const handleChangeDarkMode = (isDarkMode: boolean) => {
+    const theme = isDarkMode ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme)
+  }
+
   return (
     <>
-      <NavBar isDarkMode={isDarkMode}  />
+      <NavBar isDarkMode={isDarkMode} onChangeDarkMode={handleChangeDarkMode} />
       <main className="min-h-screen h-full pt-20">
         {children}
       </main>
