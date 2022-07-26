@@ -3,6 +3,7 @@ import { Dropdown, Header } from "../components/layouts";
 import { defaultTodoItem, defaultTodos, priorities, Priority, Status, statuses, TodoItem, User, users } from "../data";
 import { useListMethods, usePersistedState } from "../hooks";
 import { ToggleableInput } from "../components/inputs";
+import { Link } from "react-router-dom";
 
 
 const useTodos = () => {
@@ -171,6 +172,11 @@ function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
           </a>
         </li>
       ))}
+      <li>
+        <Link to="/users" className="uppercase font-bold text-xs">
+          Edit Users
+        </Link>
+      </li>
     </Dropdown>
   );
 }

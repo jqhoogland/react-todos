@@ -1,15 +1,18 @@
 import clsx from "clsx";
 import { PropsWithChildren } from "react";
+import { Link } from "react-router-dom";
 import { ThemeToggle, useTheme } from "./theme";
 
 
 export function NavBar() {
   return (
-    <nav className="fixed w-full h-20 items-center flex justify-between px-8 z-50 border-b-2 border-base-100 bg-base-300">
-      <a href="/">
+    <nav className="fixed w-full h-20 items-center flex justify-between px-8 z-50 border-b-2 border-base-100 bg-base-300 gap-4">
+      <Link to="/" className="flex-1">
         <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
-      </a>
-
+      </Link>
+      <Link to="/users">
+        <button className="btn btn-ghost">Users</button>
+      </Link>
       <ThemeToggle  />
     </nav>
   )
