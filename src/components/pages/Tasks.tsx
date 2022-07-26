@@ -4,7 +4,7 @@ import { defaultTodoItem, TodoItem, defaultTodos } from "../../data";
 import { Status, statuses } from "../../data";
 import { ThemeToggle } from "../theme";
 import { flushSync } from "react-dom";
-import autoAnimate from "@formkit/auto-animate";
+import {useAutoAnimate} from "@formkit/auto-animate/react";
 
 function Tasks() {
   const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
@@ -49,14 +49,8 @@ interface TodoListProps {
 }
 
 function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoListProps) {
-  const parentRef = useRef<HTMLUListElement | null>(null);
-
-  useEffect(() => {
-    if (parentRef.current) {
-      autoAnimate(parentRef.current)
-    } 
-  }, [parentRef])
-
+  const [parentRef] = useAutoAnimate<HTMLUListElement>()
+  
   return (
     <section>
       <Header action={
