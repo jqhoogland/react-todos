@@ -2,7 +2,7 @@ import { PropsWithChildren, useEffect, useState } from "react"
 import { Header } from "../layout";
 import { defaultTodoItem, TodoItem, defaultTodos, Priority, priorities, User, users } from "../../data";
 import { Status, statuses } from "../../data";
-import {useAutoAnimate} from "@formkit/auto-animate/react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useListMethods, usePersistedState } from "../../hooks";
 
 
@@ -11,7 +11,7 @@ const useTodos = () => {
   const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
   const { create, update, remove } = useListMethods(todos, setAndSaveTodos)
 
-  const handleCreateItem: OnCreateItem = (item= {}) => {
+  const handleCreateItem: OnCreateItem = (item = {}) => {
     create({ ...defaultTodoItem, ...item })
   }
 
@@ -20,7 +20,7 @@ const useTodos = () => {
 
 
 function Tasks() {
-  const { todos, handleCreateItem, handleUpdateItem} = useTodos()
+  const { todos, handleCreateItem, handleUpdateItem } = useTodos()
 
   return (
     <>
@@ -55,7 +55,7 @@ interface TodoListProps {
 
 function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoListProps) {
   const [parentRef] = useAutoAnimate<HTMLUListElement>()
-  
+
   const orderedTodos = todos.sort((a, b) => b.priority - a.priority);
 
   return (
@@ -87,7 +87,7 @@ function TodoListItem({ value, status, priority, assigned, onUpdateItem }: TodoI
     if (assigned.includes(userId)) {
       onUpdateItem({ assigned: assigned.filter(uid => uid !== userId) })
     } else {
-      onUpdateItem({assigned: [ ...assigned, userId]})
+      onUpdateItem({ assigned: [...assigned, userId] })
     }
   }
 
@@ -128,7 +128,7 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
   }, [value])
 
   if (isEditing) {
-    return <input className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} autoFocus/>;
+    return <input className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} autoFocus />;
   }
 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;
@@ -136,34 +136,32 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
 
 interface TodoStatusSelectProps { value: Status['value'], onChangeValue: (value: Status['value']) => void }
 function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
- 
+
   const icon = statuses.find(status => status.value === value)?.icon;
 
   return (
     <Dropdown trigger={<label className="btn btn-xs btn-ghost" tabIndex={0}>{icon}</label>}>
-        {statuses.map(status => (
-          <li key={status.value} className={status.value === value ? "bg-base-200" : ""}>
-            <a onClick={() => onChangeValue(status.value)}>
-              <span>{status.icon}</span>{" "}
-              {status.label}
-            </a>
-          </li>
-        ))}
-      </Dropdown>
+      <li className="menu-title"><span>Status</span></li>
+      {statuses.map(status => (
+        <li key={status.value} className={status.value === value ? "bg-base-200" : ""}>
+          <a onClick={() => onChangeValue(status.value)}>
+            <span>{status.icon}</span>{" "}
+            {status.label}
+          </a>
+        </li>
+      ))}
+    </Dropdown>
   );
 }
 
 
 interface TodoPrioritySelectProps { value: Priority['value'], onChangeValue: (value: Priority['value']) => void }
 function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChangeValue(parseInt(e.target.value) as Priority['value'])
-  }
-
   const icon = priorities.find(priority => priority.value === value)?.icon;
 
   return (
     <Dropdown trigger={<label className="btn btn-xs btn-ghost" tabIndex={0}>{icon}</label>}>
+      <li className="menu-title"><span>Priority</span></li>
       {priorities.map(priority => (
         <li key={priority.value} className={priority.value === value ? "bg-base-200" : ""}>
           <a onClick={() => onChangeValue(priority.value)}>
@@ -179,21 +177,18 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
 
 interface TodoAssignedSelectProps { value: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChangeValue(parseInt(e.target.value) as User['id']);
-  }
-  const stringifiedAssigned = value.map(value => value.toString());
   const names = value.map(userId => users.find(user => user.id === userId)?.name[0]);
 
   return (
     <Dropdown trigger={<label className="btn btn-xs btn-ghost w-20" tabIndex={0}>{names.join(", ")}</label>}>
-      <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={stringifiedAssigned} onChange={handleChange} multiple>
-        {users.map(user => (
-          <option key={user.id} value={user.id}>
+      <li className="menu-title"><span>Assigned</span></li>
+      {users.map(user => (
+        <li key={user.id} className={value.includes(user.id) ? "bg-base-200" : ""}>
+          <a onClick={() => onChangeValue(user.id)}>
             {user.name}
-          </option>
-        ))}
-      </select>
+          </a>
+        </li>
+      ))}
     </Dropdown>
   );
 }
