@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Header } from "../layout";
 import { defaultTodoItem, TodoItem , defaultTodos} from "../../data";
 import { Status, statuses } from "../../data";
 import { ThemeToggle } from "../theme";
+import { flushSync } from "react-dom";
 
 function Tasks() {
     const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
@@ -85,7 +86,8 @@ function TodoListItem({  value, status, onUpdateItem }: TodoItemProps) {
 
 interface ToggleableInputProps { value: string, onChangeValue: (value: string) => void }
 
-export function ToggleableInput({ value, onChangeValue}: ToggleableInputProps) {
+export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) {
+  const ref = useRef<HTMLInputElement | null>(null)
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,16 +96,18 @@ export function ToggleableInput({ value, onChangeValue}: ToggleableInputProps) {
     
   const handleOpen = () => {
     setIsEditing(true);
+    flushSync(() => {})
+    ref.current?.focus?.()
   };
     
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === "Escape") {
       setIsEditing(false)
     }
   }
 
   if (isEditing) {
-      return <input className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
+    return <input ref={ref} className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
   }
 
   return <span className="w-full h-full min-h-6" onClick={handleOpen}>{value}</span>;

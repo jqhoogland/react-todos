@@ -133,3 +133,7 @@ Goals:
 ![](3-1.mov)
 
 ## 2. `useRef` to autofocus the input when you open the toggleable input.
+
+- [x] When we click the toggleable input to open the text input, we want it to autofocus. Right now, we have to click twice. That's frustrating and annoying!
+   - In order to focus, we need to access the actual DOM element. You see... [introduce the "virtual dom"].
+   - Also introduce the render cycle because we'll need `flushSync` (because the element isn't rendered immediately!)
