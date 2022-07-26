@@ -5,6 +5,8 @@ import { ThemeToggle, useTheme } from "./theme";
 
 
 export function NavBar() {
+  console.log("Render NavBar", new Date().getTime());
+
   return (
     <nav className="fixed w-full h-20 items-center flex justify-between px-8 z-50 border-b-2 border-base-100 bg-base-300 gap-4">
       <Link to="/" className="flex-1">
@@ -20,6 +22,8 @@ export function NavBar() {
 
 
 export function Header({ children, action }: PropsWithChildren<{ action: React.ReactNode }>) {
+  console.log("Render Header", new Date().getTime());
+
   return (
     <header className="flex items-center gap-2 px-4 py-2 justify-between sticky top-20 z-10 bg-base-200 border-b border-base-200 ">
       <span className="flex gap-2 items-baseline">
@@ -32,6 +36,8 @@ export function Header({ children, action }: PropsWithChildren<{ action: React.R
 
 
 export function Layout({ children }: PropsWithChildren) {
+  console.log("Render Layout", new Date().getTime());
+
   return (
     <>
       <NavBar />
@@ -45,6 +51,7 @@ export function Layout({ children }: PropsWithChildren) {
 
 
 export function Footer() {
+  console.log("Render Footer", new Date().getTime());
   const [isDarkMode] = useTheme();
 
   return (
@@ -67,6 +74,8 @@ interface DropdownProps extends PropsWithChildren {
 }
 
 export function Dropdown({ trigger, children, className }: DropdownProps) {
+  console.log("Render Dropdown", new Date().getTime());
+  
   return <div className={clsx("dropdown", className)}>
     {trigger}
     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 border-2 border-base-200">

@@ -5,6 +5,8 @@ import { usePersistedState } from '../hooks';
 export const ThemeContext = createContext<[boolean, (isDarkMode: boolean) => void]>([false, () => { }]);
 
 export function ThemeProvider({ children }: PropsWithChildren) {
+    console.log("Render ThemeProvider", new Date().getTime());
+
     const [isDarkMode, setAndSaveIsDarkMode] = usePersistedState('isDarkMode', false);
 
     // This is the easiest way to usePersistedState.
@@ -24,6 +26,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
 
 export function ThemeToggle() {
+    console.log("Render ThemeToggle", new Date().getTime());
     const [isDarkMode, onChangeDarkMode] = useTheme();
 
     const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {

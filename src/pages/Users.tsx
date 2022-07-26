@@ -21,7 +21,9 @@ export const useUsers = () => {
 }
 
 
-function Tasks() {
+export default function Users() {
+  console.log("Render Users", new Date().getTime());
+
   const {users, handleCreateUser, handleUpdateUser, handleDeleteUser} = useUsers()
   const [parentRef] = useAutoAnimate<HTMLUListElement>()
 
@@ -47,15 +49,15 @@ function Tasks() {
   )
 }
 
-export default Tasks;
-
 
 interface UserItemProps extends User {
   onChangeName: (name: string) => void
   onDelete: () => void
 }
 
-function UserItem({name, onChangeName, onDelete }: UserItemProps) {
+function UserItem({ name, onChangeName, onDelete }: UserItemProps) {
+  console.log("Render UserItem", new Date().getTime());
+
   return (
     <ToggleableInput value={name} onChangeValue={onChangeName} onDelete={onDelete} />
   )

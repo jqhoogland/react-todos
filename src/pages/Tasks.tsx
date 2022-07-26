@@ -20,6 +20,7 @@ const useTodos = () => {
 
 
 function Tasks() {
+  console.log("Render Tasks", new Date().getTime());
   const { todos, handleCreateItem, handleUpdateItem, handleDeleteItem } = useTodos()
 
   return (
@@ -56,7 +57,9 @@ interface TodoListProps {
   onDeleteItem: OnDeleteItem
 }
 
-function TodoList({ title, status, todos, onCreateItem, onUpdateItem, onDeleteItem }: TodoListProps) {
+function TodoList({ title, status, todos, onCreateItem, onUpdateItem, onDeleteItem }: TodoListProps) { 
+  console.log("Render TodoList", new Date().getTime());
+
   const [parentRef] = useAutoAnimate<HTMLUListElement>()
 
   const orderedTodos = todos.sort((a, b) => b.priority - a.priority);
@@ -88,6 +91,7 @@ interface TodoItemProps extends TodoItem {
 }
 
 function TodoListItem({ value, status, priority, assigned, onUpdateItem, onDeleteItem }: TodoItemProps) {
+  console.log("Render TodoListItem", new Date().getTime());
 
   const handleToggleAssigned = (userId: User['id']) => {
     console.log(assigned, userId)
@@ -111,6 +115,7 @@ function TodoListItem({ value, status, priority, assigned, onUpdateItem, onDelet
 
 interface TodoStatusSelectProps { value: Status['value'], onChangeValue: (value: Status['value']) => void }
 function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
+  console.log("Render TodoStatusSelect", new Date().getTime());
 
   const icon = statuses.find(status => status.value === value)?.icon;
 
@@ -132,6 +137,8 @@ function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
 
 interface TodoPrioritySelectProps { value: Priority['value'], onChangeValue: (value: Priority['value']) => void }
 function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
+  console.log("Render TodoPrioritySelect", new Date().getTime());
+    
   const icon = priorities.find(priority => priority.value === value)?.icon;
 
   return (
@@ -152,6 +159,7 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
 
 interface TodoAssignedSelectProps { value: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
+  console.log("Render TodoAssignedSelect", new Date().getTime());
   const { users } = useUsers()
 
   const initials = value.map(userId => users.find(user => user.id === userId)?.name[0]);

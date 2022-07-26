@@ -7,6 +7,8 @@ import Users from "./pages/Users";
 
 
 export default function App() {
+  console.log("Render App", new Date().getTime());
+
   return (
     <ThemeProvider>
       <Layout>  

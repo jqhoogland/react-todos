@@ -257,3 +257,10 @@ In retrospect this fits more appropriately with the custom `useTodos` hooks.
 - [x] Link the original `<TodoAssignedSelect/>` component to useUsers
 
 Make sure to emphasize the sense in which this is not a typical hook. It uses localStorage to synchronize state. That means it won't actually update in real time & only makes sense on different routes. 
+
+
+## 5. Adding performance — memoization
+
+Talk about the render cycle. At what point does React decide to rerender a component. Shallow comparison versus nested comparison.
+
+
