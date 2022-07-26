@@ -13,8 +13,8 @@ const useUsers = () => {
   const [users, setAndSaveUsers] = usePersistedState<User[]>('users', [])
   const { create, update, remove } = useListMethods(users, setAndSaveUsers)
 
-  const handleCreateUser: OnCreateItem = (item = {}) => {
-    create({ name: "", ...item })
+  const handleCreateUser: OnCreateItem = () => {
+    create({ name: "" })
   }
 
   return { users, setAndSaveUsers, handleCreateUser, handleUpdateUser: update, handleDeleteUser: remove }
@@ -27,27 +27,36 @@ function Tasks() {
 
   return (
     <section>
-    <Header action={
-      <button onClick={console.log} className="btn btn-xs btn-ghost">+</button>
-    }>
-      <h2 className="text-xl font-bold">Users</h2>
-    </Header>
-    <ul className="space-y-2 p-4" ref={parentRef}>
-      {users.map(user => (
-        <li key={user.id}>
-          <UserItem {...user} />
-        </li>
-      ))}
-    </ul>
-  </section>
+      <Header action={
+        <button onClick={() => handleCreateUser()} className="btn btn-xs btn-ghost">+</button>
+      }>
+        <h2 className="text-xl font-bold">Users</h2>
+      </Header>
+      <ul className="space-y-2 p-4" ref={parentRef}>
+        {users.map(user => (
+          <li key={user.id}>
+            <UserItem
+              {...user}
+              onChangeName={(name) => handleUpdateUser(user.id, { name })}
+              onDelete={() => handleDeleteUser(user.id)}
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
 export default Tasks;
 
 
-function UserItem({name, }: User) {
+interface UserItemProps extends User {
+  onChangeName: (name: string) => void
+  onDelete: () => void
+}
+
+function UserItem({name, onChangeName, onDelete }: UserItemProps) {
   return (
-    <ToggleableInput value={name} onChangeValue={console.log} onDelete={console.log} />
+    <ToggleableInput value={name} onChangeValue={onChangeName} onDelete={onDelete} />
   )
 }
