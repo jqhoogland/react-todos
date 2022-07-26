@@ -8,11 +8,11 @@ import { useUsers } from "./Users";
 
 
 const useTodos = () => {
-const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
+  const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
   const { create, update, remove } = useListMethods(todos, setAndSaveTodos)
 
   const handleCreateItem: OnCreateItem = (item = {}) => {
-  create({ ...defaultTodoItem, ...item })
+    create({ ...defaultTodoItem, ...item })
   }
 
   return { todos, setAndSaveTodos, handleCreateItem, handleUpdateItem: update, handleDeleteItem: remove }
@@ -70,13 +70,12 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem, onDeleteIt
       </Header>
       <ul className="space-y-2 p-4" ref={parentRef}>
         {orderedTodos.map(todo => (
-          <li key={todo.id}>
-            <TodoListItem
-              {...todo}
-              onUpdateItem={(item) => onUpdateItem(todo.id, item)}
-              onDeleteItem={() => onDeleteItem(todo.id)}
-            />
-          </li>
+          <TodoListItem
+            {...todo}
+            onUpdateItem={(item) => onUpdateItem(todo.id, item)}
+            onDeleteItem={() => onDeleteItem(todo.id)}
+            key={todo.id} 
+          />
         ))}
       </ul>
     </section>
@@ -153,7 +152,7 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
 
 interface TodoAssignedSelectProps { value: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
-  const { users }  = useUsers()
+  const { users } = useUsers()
 
   const initials = value.map(userId => users.find(user => user.id === userId)?.name[0]);
 
@@ -162,7 +161,7 @@ function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
       className="dropdown-end"
       trigger={
         <label className="btn btn-sm py-0 btn-ghost avatar-group -space-x-4 w-28" tabIndex={0}>
-          {initials.length === 0 && <span className="text-gray-500">None</span> }
+          {initials.length === 0 && <span className="text-gray-500">None</span>}
           {initials.map(initial => <div className="avatar rounded-full w-8 h-8 bg-rose-200 text-slate-800 flex justify-center items-center text-center">{initial}</div>)}
         </label>
       }
