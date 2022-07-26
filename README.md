@@ -244,3 +244,5 @@ Bonus points for avatar items (but this isn't required).
 
 ## 4. Deleting items
 
+Add the ability to delete items if you hit delete or backspace & it's empty.
+In retrospect this fits more appropriately with the custom `useTodos` hooks.

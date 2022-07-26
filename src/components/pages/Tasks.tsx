@@ -21,7 +21,7 @@ const useTodos = () => {
 
 
 function Tasks() {
-  const { todos, handleCreateItem, handleUpdateItem } = useTodos()
+  const { todos, handleCreateItem, handleUpdateItem, handleDeleteItem } = useTodos()
 
   return (
     <>
@@ -33,6 +33,7 @@ function Tasks() {
             todos={todos.filter(todo => todo.status === status.value)}
             onCreateItem={handleCreateItem}
             onUpdateItem={handleUpdateItem}
+            onDeleteItem={handleDeleteItem}
             key={status.value}
           />
         ))
@@ -45,6 +46,7 @@ export default Tasks;
 
 type OnCreateItem = (item?: Partial<TodoItem>) => void
 type OnUpdateItem = (id: TodoItem['id'], item: Partial<TodoItem>) => void;
+type OnDeleteItem = (id: TodoItem['id']) => void
 
 interface TodoListProps {
   todos: TodoItem[];
@@ -52,9 +54,10 @@ interface TodoListProps {
   title: string
   onCreateItem: OnCreateItem
   onUpdateItem: OnUpdateItem
+  onDeleteItem: OnDeleteItem
 }
 
-function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoListProps) {
+function TodoList({ title, status, todos, onCreateItem, onUpdateItem, onDeleteItem }: TodoListProps) {
   const [parentRef] = useAutoAnimate<HTMLUListElement>()
 
   const orderedTodos = todos.sort((a, b) => b.priority - a.priority);
@@ -69,7 +72,11 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoList
       <ul className="space-y-2 p-4" ref={parentRef}>
         {orderedTodos.map(todo => (
           <li key={todo.id}>
-            <TodoListItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
+            <TodoListItem
+              {...todo}
+              onUpdateItem={(item) => onUpdateItem(todo.id, item)}
+              onDeleteItem={() => onDeleteItem(todo.id)}
+            />
           </li>
         ))}
       </ul>
@@ -78,10 +85,11 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoList
 }
 
 interface TodoItemProps extends TodoItem {
-  onUpdateItem: (item: Partial<TodoItem>) => void
+  onUpdateItem: (item: Partial<TodoItem>) => void,
+  onDeleteItem: () => void
 }
 
-function TodoListItem({ value, status, priority, assigned, onUpdateItem }: TodoItemProps) {
+function TodoListItem({ value, status, priority, assigned, onUpdateItem, onDeleteItem }: TodoItemProps) {
 
   const handleToggleAssigned = (userId: User['id']) => {
     console.log(assigned, userId)
@@ -96,16 +104,16 @@ function TodoListItem({ value, status, priority, assigned, onUpdateItem }: TodoI
     <li className="flex gap-2">
       <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
       <TodoPrioritySelect value={priority} onChangeValue={priority => onUpdateItem({ priority })} />
-      <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
+      <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} onDeleteItem={onDeleteItem} />
       <TodoAssignedSelect value={assigned} onChangeValue={handleToggleAssigned} />
     </li>
   )
 }
 
 
-interface ToggleableInputProps { value: string, onChangeValue: (value: string) => void }
+interface ToggleableInputProps { value: string, onChangeValue: (value: string) => void, onDeleteItem: () => void }
 
-export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) {
+export function ToggleableInput({ value, onChangeValue, onDeleteItem }: ToggleableInputProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +127,8 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === "Escape") {
       setIsEditing(false)
+    } else if ((e.key === "Backspace" || e.key === "Delete") && e.currentTarget.value === "") {
+      onDeleteItem()
     }
   }
 
