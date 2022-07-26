@@ -3,21 +3,11 @@ import { Header } from "../layout";
 import { defaultTodoItem, TodoItem, defaultTodos } from "../../data";
 import { Status, statuses } from "../../data";
 import {useAutoAnimate} from "@formkit/auto-animate/react";
+import { usePersistedState } from "../../hooks";
+
 
 const useTodos = () => {
-  const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
-
-  const setAndSaveTodos = (todos: TodoItem[]) => {
-    setTodos(todos)
-    localStorage.setItem("todos", JSON.stringify(todos))
-  }
-
-  useEffect(() => {
-    const savedTodos = localStorage.getItem("todos");
-    if (savedTodos) {
-      setTodos(JSON.parse(savedTodos));
-    }
-  }, [])
+  const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
 
   const handleCreateItem: OnCreateItem = (item = {}) => {
     setAndSaveTodos([...todos, { id: todos.length, ...defaultTodoItem, ...item }])

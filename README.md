@@ -172,4 +172,5 @@ would be more appropriate than doing the same inside a `useLayoutEffect`.
 - [x] First of all, let's take advantage of `autoFocus` to get rid of some excess code. 
 - [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the idea of custom hooks without having to write a custom hook yourself.
 - [x] Let's start by extracting a `useTheme = () => useContext(ThemeContext)` hook. (Out of order)
-- [x] Now let's extract the tasks logic into its own hook. For now, this serves to make it more legibl
+- [x] Now let's extract the `<Tasks/>` logic into its own hook. For now, this serves to make it more legible.
+- [x] In light of the single responsibility principle, can we extract the specific function of `useState` + local storage? Then we can use this in both 
