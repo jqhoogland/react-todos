@@ -20,6 +20,24 @@ const useTodos = () => {
   return { todos, setAndSaveTodos, handleCreateItem, handleUpdateItem }
 }
 
+function useList<T extends Record<string, any>>() {
+  const [list, setList] = useState<(T & {id: number})[]>([])
+
+  const create = (item: T) => {
+    setList([...list, { id: list.length, ...item }])
+  }
+
+  const update = (id: number, newValue: Partial<T>) => {
+    setList(list.map(item => item.id === id ? { ...item, ...newValue } : item))
+  }
+
+  const remove = (id: number) => {
+    setList(list.filter(item => item.id !== id))
+  }
+
+  return { list, setList, create, update, remove }
+}
+
 function Tasks() {
   const { todos, handleCreateItem, handleUpdateItem} = useTodos()
 

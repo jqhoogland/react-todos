@@ -7,10 +7,6 @@ export const ThemeContext = createContext<[boolean, (isDarkMode: boolean) => voi
 export function ThemeProvider({ children }: PropsWithChildren) {
     const [isDarkMode, setAndSaveIsDarkMode] = usePersistedState('isDarkMode', false);
 
-    const handleChangeDarkMode = (isDarkMode: boolean) => {
-        setAndSaveIsDarkMode(isDarkMode)
-    }
-    
     // This is the easiest way to usePersistedState.
     // The alternative is to just write a custom hook and avoid the overeager abstraction, 
     // ands that's probably even better, but this will do.
@@ -20,7 +16,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     }, [isDarkMode])
 
     return (
-        <ThemeContext.Provider value={[isDarkMode, handleChangeDarkMode]}>
+        <ThemeContext.Provider value={[isDarkMode, setAndSaveIsDarkMode]}>
             {children}
         </ThemeContext.Provider>
     )
