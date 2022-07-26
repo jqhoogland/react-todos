@@ -170,4 +170,4 @@ would be more appropriate than doing the same inside a `useLayoutEffect`.
 ## 4. `useCustomEffect` to persist state in multiple places & explain ourselves better
 - [x] First of all, let's take advantage of `autoFocus` to get rid of some excess code. 
 - [x] And let's use `auto-animate`'s custom hook to simplify that code. Lightweight example that introduces the idea of custom hooks without having to write a custom hook yourself.
-- [x] We want to persist 
+- [x] We want to persist the todos to local storage as well. Let's start by writing out the code inside the `<Tasks/>` element.

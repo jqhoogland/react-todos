@@ -9,12 +9,24 @@ import {useAutoAnimate} from "@formkit/auto-animate/react";
 function Tasks() {
   const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
 
+  const setAndSaveTodos = (todos: TodoItem[]) => {
+    setTodos(todos)
+    localStorage.setItem("todos", JSON.stringify(todos))
+  }
+
+  useEffect(() => {
+    const savedTodos = localStorage.getItem("todos");
+    if (savedTodos) {
+      setTodos(JSON.parse(savedTodos));
+    }
+  }, [])
+
   const handleCreateItem: OnCreateItem = (item = {}) => {
-    setTodos([...todos, { id: todos.length, ...defaultTodoItem, ...item }])
+    setAndSaveTodos([...todos, { id: todos.length, ...defaultTodoItem, ...item }])
   }
 
   const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
-    setTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
+    setAndSaveTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
   }
 
   return (
