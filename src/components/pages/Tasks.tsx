@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Header } from "../layout";
-import { defaultTodoItem, TodoItem, defaultTodos, Priority, priorities } from "../../data";
+import { defaultTodoItem, TodoItem, defaultTodos, Priority, priorities, User, users } from "../../data";
 import { Status, statuses } from "../../data";
 import {useAutoAnimate} from "@formkit/auto-animate/react";
 import { useListMethods, usePersistedState } from "../../hooks";
@@ -76,19 +76,17 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoList
   )
 }
 
-interface TodoItemProps {
-  value: string
-  status: Status['value'];
-  priority: Priority['value'];
+interface TodoItemProps extends TodoItem {
   onUpdateItem: (item: Partial<TodoItem>) => void
 }
 
-function TodoListItem({ value, status, priority, onUpdateItem }: TodoItemProps) {
+function TodoListItem({ value, status, priority, assigned, onUpdateItem }: TodoItemProps) {
   return (
     <li className="flex gap-2">
       <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
       <TodoPrioritySelect value={priority} onChangeValue={priority => onUpdateItem({ priority })} />
       <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} />
+      <TodoAssignedSelect value={assigned} onChangeValue={assigned => onUpdateItem({assigned})} />
     </li>
   )
 }
@@ -157,6 +155,27 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
         <option key={priority.value} value={priority.value}>
           <span>{priority.icon}</span>{" "}
           {priority.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+
+interface TodoAssignedSelectProps { value?: User['id'], onChangeValue: (value: User['id']) => void }
+function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChangeValue(parseInt(e.target.value) as User['id'])
+  }
+
+  return (
+    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange}>
+      <option value={undefined}>
+        None
+      </option>
+      {users.map(user => (
+        <option key={user.id} value={user.id}>
+          {user.name}
         </option>
       ))}
     </select>

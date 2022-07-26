@@ -18,10 +18,10 @@ export type Priority = typeof priorities[number];
 
 
 export const users = [
-  { id: 0, label: 'Gadisa' },
-  { id: 1, label: 'Mehdi' },
-  { id: 1, label: 'Henk' },
-  { id: 1, label: 'Ayşe' },
+  { id: 0, name: 'Gadisa' },
+  { id: 1, name: 'Mehdi' },
+  { id: 1, name: 'Henk' },
+  { id: 1, name: 'Ayşe' },
 ]
 export type User = typeof users[number];
 
