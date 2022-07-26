@@ -118,7 +118,7 @@ NOTE: 2.2 is quite a lot of work in comparison to these two — maybe we can spl
 
 - [x] Add a checkbox to the right of the navbar for enabling dark mode. Also add DaisyUI because it makes themes a little easier (all you have to do is replace `bg-white` with `bg-base-100`).
    - This involves changing attributes on `<html/>` so a diagram will be helpful. (This previews what we're about to do with state).
-- [ ] Lift the state to the `<App/>` component (we want the theme to be global information!) 
+- [ ] Let's add a footer that displays a moon or sun emoji depending on the theme. We have to lift state up to `<App/>`. Oof. Also, changing the DOM directly is not very React, so there's a good "theoretical" reason to do this!
 - [ ] Extract the state to a `<ThemeProvider/>` and remove prop-drilling in favor of context.
 
 Goals:

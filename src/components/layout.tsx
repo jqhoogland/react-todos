@@ -41,6 +41,24 @@ export function Layout({ children }: PropsWithChildren) {
       <main className="min-h-screen h-full pt-20">
         {children}
       </main>
+      <Footer/>
     </>
+  )
+}
+
+export function Footer({ }) {
+  const isDarkMode = true
+
+  return (
+    <div className="h-40 flex flex-col place-items-center p-10">
+      <p className="text-center text-sm w-full">
+        Made in {
+          isDarkMode ? '🌚' : '🌝'
+        }
+      </p>
+      <p className="text-center font-mono w-full font-bold">
+        Bit Academy
+      </p>
+    </div>
   )
 }
