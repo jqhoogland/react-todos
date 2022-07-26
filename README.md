@@ -132,7 +132,7 @@ Goals:
 
 ![](3-1.mov)
 
-## 2. `useRef` to autofocus the input when you open the toggleable input.
+## 2. `useRef` to autofocus & animate
 
 - [x] When we click the toggleable input to open the text input, we want it to autofocus. Right now, we have to click twice. That's frustrating and annoying!
    - In order to focus, we need to access the actual DOM element. You see... [introduce the "virtual dom"].
@@ -140,3 +140,7 @@ Goals:
 - [x] Introduce [auto-animate](https://auto-animate.formkit.com/) for another example of `useRef` (& light introduction of `useEffect`)
 
 ![](3-2.mov)
+
+## 3. `useEffect` to autofocus better
+
+- [ ] When you create a new element, it shows up non-toggled. Ideally, we'd like to create a new element, and automatically open & focus the input & slide it into view.

@@ -105,8 +105,6 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
 
   const handleOpen = () => {
     setIsEditing(true);
-    flushSync(() => { })
-    ref.current?.focus?.()
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -114,6 +112,12 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
       setIsEditing(false)
     }
   }
+
+  useEffect(() => {
+    if (isEditing) {
+      ref.current?.focus?.()
+    }
+  }, [isEditing])
 
   if (isEditing) {
     return <input ref={ref} className="px-2 flex border-2 rounded-lg w-full input input-sm input-bordered" onKeyUp={handleKeyUp} value={value} onChange={handleChange} />;
