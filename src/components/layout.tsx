@@ -1,25 +1,29 @@
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useState } from "react"
 
-export function NavBar() {
+interface NavBarProps {
+  isDarkMode: boolean;
+}
+
+export function NavBar({isDarkMode}: NavBarProps) {
   return (
     <nav className="fixed w-full h-20 items-center flex justify-between px-8 z-50 border-b-2 bg-base-100">
       <a href="/">
         <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
       </a>
 
-      <ThemeToggle/>
+      <ThemeToggle isDarkMode={isDarkMode}  />
     </nav>
   )
 }
 
-function ThemeToggle() {
+function ThemeToggle({isDarkMode}: NavBarProps) {
   const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const theme = e.target.checked ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', theme)
   }
 
   return (
-    <input type="checkbox" onChange={handleCheck}/>
+    <input type="checkbox" onChange={handleCheck} checked={isDarkMode} />
   )
 }
 
@@ -35,20 +39,24 @@ export function Header({ children, action }: PropsWithChildren<{ action: React.R
 }
 
 export function Layout({ children }: PropsWithChildren) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   return (
     <>
-      <NavBar />
+      <NavBar isDarkMode={isDarkMode}  />
       <main className="min-h-screen h-full pt-20">
         {children}
       </main>
-      <Footer/>
+      <Footer isDarkMode={isDarkMode} />
     </>
   )
 }
 
-export function Footer({ }) {
-  const isDarkMode = true
+interface FooterProps {
+  isDarkMode: boolean
+}
 
+export function Footer({ isDarkMode }: FooterProps) {
   return (
     <div className="h-40 flex flex-col place-items-center p-10">
       <p className="text-center text-sm w-full">
