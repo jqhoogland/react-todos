@@ -194,6 +194,7 @@ export const priorities = [
   { label: "None", value: 1, icon: "⬜️" },
 ]
 ```
+![](4-1.mov)
 
 - [x] Let's add users we can assign todos to. Create a `<TodoUserSelect/>` and wire it up inside the TodoListItem...
 ```ts
