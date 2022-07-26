@@ -56,6 +56,8 @@ interface TodoListProps {
 function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoListProps) {
   const [parentRef] = useAutoAnimate<HTMLUListElement>()
   
+  const orderedTodos = todos.sort((a, b) => b.priority - a.priority);
+
   return (
     <section>
       <Header action={
@@ -64,7 +66,7 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem }: TodoList
         <h2 className="text-xl font-bold">{title}</h2>
       </Header>
       <ul className="space-y-2 p-4" ref={parentRef}>
-        {todos.map(todo => (
+        {orderedTodos.map(todo => (
           <li key={todo.id}>
             <TodoListItem {...todo} onUpdateItem={(item) => onUpdateItem(todo.id, item)} />
           </li>
