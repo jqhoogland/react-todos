@@ -138,3 +138,5 @@ Goals:
    - In order to focus, we need to access the actual DOM element. You see... [introduce the "virtual dom"].
    - Also introduce the render cycle because we'll need `flushSync` (because the element isn't rendered immediately!)
 - [x] Introduce [auto-animate](https://auto-animate.formkit.com/) for another example of `useRef` (& light introduction of `useEffect`)
+
+![](3-2.mov)
