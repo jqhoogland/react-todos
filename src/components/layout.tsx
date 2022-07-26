@@ -5,14 +5,14 @@ interface NavBarProps {
   onChangeDarkMode: (isDarkMode: boolean) => void;
 }
 
-export function NavBar({isDarkMode, onChangeDarkMode}: NavBarProps) {
+export function NavBar(props: NavBarProps) {
   return (
     <nav className="fixed w-full h-20 items-center flex justify-between px-8 z-50 border-b-2 bg-base-100">
       <a href="/">
         <h1 className="text-lg font-bold"><code>bit-todos</code></h1>
       </a>
 
-      <ThemeToggle isDarkMode={isDarkMode} onChangeDarkMode={onChangeDarkMode} />
+      <ThemeToggle {...props}  />
     </nav>
   )
 }
