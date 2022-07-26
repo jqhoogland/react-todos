@@ -102,7 +102,7 @@ function TodoListItem({ value, status, priority, assigned, onUpdateItem, onDelet
     <li className="flex gap-2">
       <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
       <TodoPrioritySelect value={priority} onChangeValue={priority => onUpdateItem({ priority })} />
-      <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} onDeleteItem={onDeleteItem} />
+      <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} onDelete={onDeleteItem} />
       <TodoAssignedSelect value={assigned} onChangeValue={handleToggleAssigned} />
     </li>
   )

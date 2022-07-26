@@ -37,8 +37,6 @@ export default Tasks;
 
 function UserItem({name, }: User) {
   return (
-    <>
-      {name}
-    </>
+    <ToggleableInput value={name} onChangeValue={console.log} onDelete={console.log} />
   )
 }

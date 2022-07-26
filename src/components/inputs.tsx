@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-interface ToggleableInputProps { value: string; onChangeValue: (value: string) => void; onDeleteItem: () => void; }
+interface ToggleableInputProps { value: string; onChangeValue: (value: string) => void; onDelete: () => void; }
 
-export function ToggleableInput({ value, onChangeValue, onDeleteItem }: ToggleableInputProps) {
+export function ToggleableInput({ value, onChangeValue, onDelete }: ToggleableInputProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +17,7 @@ export function ToggleableInput({ value, onChangeValue, onDeleteItem }: Toggleab
     if (e.key === 'Enter' || e.key === "Escape") {
       setIsEditing(false);
     } else if ((e.key === "Backspace" || e.key === "Delete") && e.currentTarget.value === "") {
-      onDeleteItem();
+      onDelete();
     }
   };
 
