@@ -15,4 +15,20 @@ export function usePersistedState<T>(key: string, initialValue: T) {
     }
   
     return [value, setAndSaveValue] as const;
+}
+  
+export function useListMethods<T extends  {id: number }>(list: T[], setList: (list: T[]) => void) {
+  const create = (item: Omit<T, 'id'>) => {
+    setList([...list, { id: list.length, ...item } as T])
   }
+
+  const update = (id: number, newValue: Partial<T>) => {
+    setList(list.map(item => item.id === id ? { ...item, ...newValue } : item))
+  }
+
+  const remove = (id: number) => {
+    setList(list.filter(item => item.id !== id))
+  }
+
+  return { create, update, remove }
+}

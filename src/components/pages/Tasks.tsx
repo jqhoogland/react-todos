@@ -3,40 +3,21 @@ import { Header } from "../layout";
 import { defaultTodoItem, TodoItem, defaultTodos } from "../../data";
 import { Status, statuses } from "../../data";
 import {useAutoAnimate} from "@formkit/auto-animate/react";
-import { usePersistedState } from "../../hooks";
+import { useListMethods, usePersistedState } from "../../hooks";
+
 
 
 const useTodos = () => {
   const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
+  const { create, update, remove } = useListMethods(todos, setAndSaveTodos)
 
-  const handleCreateItem: OnCreateItem = (item = {}) => {
-    setAndSaveTodos([...todos, { id: todos.length, ...defaultTodoItem, ...item }])
+  const handleCreateItem: OnCreateItem = (item= {}) => {
+    create({ ...defaultTodoItem, ...item })
   }
 
-  const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
-    setAndSaveTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
-  }
-
-  return { todos, setAndSaveTodos, handleCreateItem, handleUpdateItem }
+  return { todos, setAndSaveTodos, handleCreateItem, handleUpdateItem: update, handleDeleteItem: remove }
 }
 
-function useList<T extends Record<string, any>>() {
-  const [list, setList] = useState<(T & {id: number})[]>([])
-
-  const create = (item: T) => {
-    setList([...list, { id: list.length, ...item }])
-  }
-
-  const update = (id: number, newValue: Partial<T>) => {
-    setList(list.map(item => item.id === id ? { ...item, ...newValue } : item))
-  }
-
-  const remove = (id: number) => {
-    setList(list.filter(item => item.id !== id))
-  }
-
-  return { list, setList, create, update, remove }
-}
 
 function Tasks() {
   const { todos, handleCreateItem, handleUpdateItem} = useTodos()
@@ -62,7 +43,7 @@ function Tasks() {
 export default Tasks;
 
 type OnCreateItem = (item?: Partial<TodoItem>) => void
-type OnUpdateItem = (id: TodoItem['id'], item?: Partial<TodoItem>) => void;
+type OnUpdateItem = (id: TodoItem['id'], item: Partial<TodoItem>) => void;
 
 interface TodoListProps {
   todos: TodoItem[];
