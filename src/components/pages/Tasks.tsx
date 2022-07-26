@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { Header } from "../layout";
 import { defaultTodoItem, TodoItem, defaultTodos } from "../../data";
 import { Status, statuses } from "../../data";
-import { ThemeToggle } from "../theme";
-import { flushSync } from "react-dom";
 import {useAutoAnimate} from "@formkit/auto-animate/react";
 
-function Tasks() {
+const useTodos = () => {
   const [todos, setTodos] = useState<TodoItem[]>(defaultTodos)
 
   const setAndSaveTodos = (todos: TodoItem[]) => {
@@ -28,6 +26,12 @@ function Tasks() {
   const handleUpdateItem: OnUpdateItem = (id, update = {}) => {
     setAndSaveTodos(todos.map(todo => todo.id === id ? { ...todo, ...update } : todo))
   }
+
+  return { todos, setAndSaveTodos, handleCreateItem, handleUpdateItem }
+}
+
+function Tasks() {
+  const { todos, handleCreateItem, handleUpdateItem} = useTodos()
 
   return (
     <>
