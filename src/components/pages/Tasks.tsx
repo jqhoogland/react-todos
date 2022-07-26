@@ -136,19 +136,20 @@ export function ToggleableInput({ value, onChangeValue }: ToggleableInputProps) 
 
 interface TodoStatusSelectProps { value: Status['value'], onChangeValue: (value: Status['value']) => void }
 function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChangeValue(e.target.value as Status['value'])
-  }
+ 
+  const icon = statuses.find(status => status.value === value)?.icon;
 
   return (
-    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange}>
-      {statuses.map(status => (
-        <option key={status.value} value={status.value}>
-          <span>{status.icon}</span>{" "}
-          {status.label}
-        </option>
-      ))}
-    </select>
+    <Dropdown trigger={<label className="btn btn-xs btn-ghost" tabIndex={0}>{icon}</label>}>
+        {statuses.map(status => (
+          <li key={status.value} className={status.value === value ? "bg-base-200" : ""}>
+            <a onClick={() => onChangeValue(status.value)}>
+              <span>{status.icon}</span>{" "}
+              {status.label}
+            </a>
+          </li>
+        ))}
+      </Dropdown>
   );
 }
 
@@ -159,15 +160,19 @@ function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
     onChangeValue(parseInt(e.target.value) as Priority['value'])
   }
 
+  const icon = priorities.find(priority => priority.value === value)?.icon;
+
   return (
-    <select className="border-2 rounded-lg py-0.5 select select-sm select-bordered text-xs" value={value} onChange={handleChange}>
+    <Dropdown trigger={<label className="btn btn-xs btn-ghost" tabIndex={0}>{icon}</label>}>
       {priorities.map(priority => (
-        <option key={priority.value} value={priority.value}>
-          <span>{priority.icon}</span>{" "}
-          {priority.label}
-        </option>
+        <li key={priority.value} className={priority.value === value ? "bg-base-200" : ""}>
+          <a onClick={() => onChangeValue(priority.value)}>
+            <span>{priority.icon}</span>{" "}
+            {priority.label}
+          </a>
+        </li>
       ))}
-    </select>
+    </Dropdown>
   );
 }
 
@@ -200,8 +205,8 @@ interface DropdownProps extends PropsWithChildren {
 function Dropdown({ trigger, children }: DropdownProps) {
   return <div className="dropdown">
     {trigger}
-    <div tabIndex={0}  className="dropdown-content">
+    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 border-2 border-base-200">
       {children}
-    </div>
+    </ul>
   </div>
 }
