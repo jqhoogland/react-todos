@@ -41,6 +41,8 @@ Goals:
 Given this mockup:
 ![](public/2-1.png)
 
+- [x] How might you break this apart? Just list some of the component names.
+
 Goals:
 - Break this down into components. It depends how you want to break it down, but you can get something like: `<Layout/>`, `<NavBar/>`, `<TodoSection/>`, `<TodoSectionHeader/>`, `<TodoSectionBody/>`, `<TodoItem/>` 
 
@@ -50,16 +52,16 @@ Goals:
 
 ## 2. Build a static version
 
-- Get [Tailwind up and running](https://tailwindcss.com/docs/guides/vite).
-- Split out the layouts (`<NavBar/>`, `<Layout/>`, & `<Header/>`)
+- [x] Get [Tailwind up and running](https://tailwindcss.com/docs/guides/vite).
+- [x] Split out the layouts (`<NavBar/>`, `<Layout/>`, & `<Header/>`)
 
 ![](public/2-1c.png)
 
 
-- Convert checkbox -> status select && split the todo list item into:
-    - A span that turns into a text input on click (`<ToggleableInput/>`). (This is what the current list item is).
-    - A status select (to replace the checkbox).
-    - A wrapper for the two of these.
+- [x] Convert checkbox -> status select && split the todo list item into:
+    - [x] A span that turns into a text input on click (`<ToggleableInput/>`). (This is what the current list item is).
+    - [x] A status select (to replace the checkbox).
+    - [x] A wrapper for the two of these.
 
 NOTE: You are free to skip prop drilling for now (thereby breaking the status select & text input)
 
@@ -98,14 +100,29 @@ What is state and what isn't? (This question is always relative to a given compo
 ## 4. Identify where state should live.
 
 We've actually already mostly done this. We want the state to live in the `<Tasks/>` component.
-Let's pass state all the way down from the top-level to the bottom.
+- [x] Let's pass state all the way down from the top-level to the bottom.
 
 Another relatively easy step. 
 NOTE: 2.2 is quite a lot of work in comparison to these two — maybe we can split more of this out or introduce a little more state (e.g., a button to collapse a section)?
 
 ## 5. Add inverse data flow
 
-- When you select a new status, it should propagate up (and change in all other lists)
-- When you change a test
-- When you add a new todo, it should have the status of the group you added it from.
-- Todos should be filtered by status
+- [x] When you select a new status, it should propagate up (and change in all other lists)
+- [x] When you change a test
+- [x] When you add a new todo, it should have the status of the group you added it from.
+- [x] Todos should be filtered by status
+
+# 3. All about hooks
+
+## 1. `useContext` (and implementing a dark-mode).
+
+- [x] Add a checkbox to the right of the navbar for enabling dark mode. Also add DaisyUI because it makes themes a little easier (all you have to do is replace `bg-white` with `bg-base-100`).
+   - This involves changing attributes on `<html/>` so a diagram will be helpful. (This previews what we're about to do with state).
+- [ ] Lift the state to the `<App/>` component (we want the theme to be global information!) 
+- [ ] Extract the state to a `<ThemeProvider/>` and remove prop-drilling in favor of context.
+
+Goals:
+- Actually learn the word "prop-drilling". Are you exhausted yet having to repeatedly type the same props you pass down again and again? It gets easy with the spread operator, but it's still annoying!
+- Understand `useContext`, `Providers`
+- Introduction to the render cycle. 
+- When to use `useContext` and when not to use `useContext` (most of the time). Alternatives (smart use of children).
