@@ -3,9 +3,10 @@ import { Dropdown, Header } from "../components/layouts";
 import { defaultUsers, TodoItem, User } from "../data";
 import { useListMethods, usePersistedState } from "../hooks";
 import { ToggleableInput } from "../components/inputs";
+import { useCallback } from "react";
 
 
-type OnCreateItem = (item?: Partial<TodoItem>) => void
+type OnCreateItem = () => void
 type OnUpdateItem = (id: TodoItem['id'], item: Partial<TodoItem>) => void;
 type OnDeleteItem = (id: TodoItem['id']) => void
 
@@ -13,9 +14,9 @@ export const useUsers = () => {
   const [users, setAndSaveUsers] = usePersistedState<User[]>('users', defaultUsers)
   const { create, update, remove } = useListMethods(users, setAndSaveUsers)
 
-  const handleCreateUser: OnCreateItem = () => {
+  const handleCreateUser: OnCreateItem = useCallback(() => {
     create({ name: "" })
-  }
+  }, [create])
 
   return { users, setAndSaveUsers, handleCreateUser, handleUpdateUser: update, handleDeleteUser: remove }
 }
@@ -30,7 +31,7 @@ export default function Users() {
   return (
     <section>
       <Header action={
-        <button onClick={() => handleCreateUser()} className="btn btn-xs btn-ghost">+</button>
+        <button onClick={handleCreateUser} className="btn btn-xs btn-ghost">+</button>
       }>
         <h2 className="text-xl font-bold">Users</h2>
       </Header>

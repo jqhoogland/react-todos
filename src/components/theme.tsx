@@ -1,5 +1,5 @@
 
-import { createContext, PropsWithChildren, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { usePersistedState } from '../hooks';
 
 export const ThemeContext = createContext<[boolean, (isDarkMode: boolean) => void]>([false, () => { }]);
@@ -29,9 +29,9 @@ export function ThemeToggle() {
     console.log("Render ThemeToggle", new Date().getTime());
     const [isDarkMode, onChangeDarkMode] = useTheme();
 
-    const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCheck = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         onChangeDarkMode(e.target.checked)
-    }
+    }, [onChangeDarkMode])
 
     return (
         <input type="checkbox" onChange={handleCheck} checked={isDarkMode} className="toggle" />

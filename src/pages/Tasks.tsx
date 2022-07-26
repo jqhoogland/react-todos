@@ -5,21 +5,22 @@ import { useListMethods, usePersistedState } from "../hooks";
 import { ToggleableInput } from "../components/inputs";
 import { Link } from "react-router-dom";
 import { useUsers } from "./Users";
+import { useCallback, useMemo } from "react";
 
 
 const useTodos = () => {
   const [todos, setAndSaveTodos] = usePersistedState<TodoItem[]>('todos', defaultTodos)
   const { create, update, remove } = useListMethods(todos, setAndSaveTodos)
 
-  const handleCreateItem: OnCreateItem = (item = {}) => {
+  const handleCreateItem: OnCreateItem = useCallback((item = {}) => {
     create({ ...defaultTodoItem, ...item })
-  }
+  }, [create])
 
   return { todos, setAndSaveTodos, handleCreateItem, handleUpdateItem: update, handleDeleteItem: remove }
 }
 
 
-function Tasks() {
+export default function Tasks() {
   console.log("Render Tasks", new Date().getTime());
   const { todos, handleCreateItem, handleUpdateItem, handleDeleteItem } = useTodos()
 
@@ -42,8 +43,6 @@ function Tasks() {
   )
 }
 
-export default Tasks;
-
 type OnCreateItem = (item?: Partial<TodoItem>) => void
 type OnUpdateItem = (id: TodoItem['id'], item: Partial<TodoItem>) => void;
 type OnDeleteItem = (id: TodoItem['id']) => void
@@ -57,17 +56,21 @@ interface TodoListProps {
   onDeleteItem: OnDeleteItem
 }
 
-function TodoList({ title, status, todos, onCreateItem, onUpdateItem, onDeleteItem }: TodoListProps) { 
+function TodoList({ title, status, todos, onCreateItem, ...props }: TodoListProps) {
   console.log("Render TodoList", new Date().getTime());
 
   const [parentRef] = useAutoAnimate<HTMLUListElement>()
 
-  const orderedTodos = todos.sort((a, b) => b.priority - a.priority);
+  const handleCreateItem = useCallback(
+    () => onCreateItem({ status }),
+    [onCreateItem, status]
+  )
+  const orderedTodos = useMemo(() => todos.sort((a, b) => b.priority - a.priority), [todos]);
 
   return (
     <section>
       <Header action={
-        <button onClick={() => onCreateItem({ status })} className="btn btn-xs btn-ghost">+</button>
+        <button onClick={handleCreateItem} className="btn btn-xs btn-ghost">+</button>
       }>
         <h2 className="text-xl font-bold">{title}</h2>
       </Header>
@@ -75,9 +78,8 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem, onDeleteIt
         {orderedTodos.map(todo => (
           <TodoListItem
             {...todo}
-            onUpdateItem={(item) => onUpdateItem(todo.id, item)}
-            onDeleteItem={() => onDeleteItem(todo.id)}
-            key={todo.id} 
+            {...props}
+            key={todo.id}
           />
         ))}
       </ul>
@@ -86,27 +88,31 @@ function TodoList({ title, status, todos, onCreateItem, onUpdateItem, onDeleteIt
 }
 
 interface TodoItemProps extends TodoItem {
-  onUpdateItem: (item: Partial<TodoItem>) => void,
-  onDeleteItem: () => void
+  onUpdateItem: OnUpdateItem
+  onDeleteItem: OnDeleteItem
 }
 
-function TodoListItem({ value, status, priority, assigned, onUpdateItem, onDeleteItem }: TodoItemProps) {
+function TodoListItem({ id, value, status, priority, assigned, onUpdateItem, onDeleteItem }: TodoItemProps) {
   console.log("Render TodoListItem", new Date().getTime());
 
-  const handleToggleAssigned = (userId: User['id']) => {
-    console.log(assigned, userId)
+  // Memoization is required because it's passed down
+  const handleChangeStatus = useCallback((status: Status['value']) => onUpdateItem(id, { status }), [onUpdateItem]);
+  const handleChangePriority = useCallback((priority: Priority['value']) => onUpdateItem(id, { priority }), [onUpdateItem]);
+  const handleChangeText = useCallback((value: string) => onUpdateItem(id, { value }), [onUpdateItem]);
+  const handleToggleAssigned = useCallback((userId: User['id']) => {
     if (assigned.includes(userId)) {
-      onUpdateItem({ assigned: assigned.filter(uid => uid !== userId) })
+      onUpdateItem(id, { assigned: assigned.filter(uid => uid !== userId) })
     } else {
-      onUpdateItem({ assigned: [...assigned, userId] })
+      onUpdateItem(id, { assigned: [...assigned, userId] })
     }
-  }
+  }, [assigned, onUpdateItem])
+  const handleDelete = useCallback(() => onDeleteItem(id), [onDeleteItem, id])
 
   return (
     <li className="flex gap-2">
-      <TodoStatusSelect value={status} onChangeValue={status => onUpdateItem({ status })} />
-      <TodoPrioritySelect value={priority} onChangeValue={priority => onUpdateItem({ priority })} />
-      <ToggleableInput value={value} onChangeValue={value => onUpdateItem({ value })} onDelete={onDeleteItem} />
+      <TodoStatusSelect value={status} onChangeValue={handleChangeStatus} />
+      <TodoPrioritySelect value={priority} onChangeValue={handleChangePriority} />
+      <ToggleableInput value={value} onChangeValue={handleChangeText} onDelete={handleDelete} />
       <TodoAssignedSelect value={assigned} onChangeValue={handleToggleAssigned} />
     </li>
   )
@@ -117,52 +123,72 @@ interface TodoStatusSelectProps { value: Status['value'], onChangeValue: (value:
 function TodoStatusSelect({ value, onChangeValue }: TodoStatusSelectProps) {
   console.log("Render TodoStatusSelect", new Date().getTime());
 
+  // Memoization isn't necessary because strings are compared by value
   const icon = statuses.find(status => status.value === value)?.icon;
 
   return (
     <Dropdown trigger={<label className="btn btn-xs btn-ghost" tabIndex={0}>{icon}</label>}>
       <li className="menu-title"><span>Status</span></li>
       {statuses.map(status => (
-        <li key={status.value} className={status.value === value ? "bg-base-200" : ""}>
-          <a onClick={() => onChangeValue(status.value)}>
-            <span>{status.icon}</span>{" "}
-            {status.label}
-          </a>
-        </li>
+        <TodoStatusItem {...status} key={status.value} selected={status.value === value} onChangeValue={onChangeValue} />
       ))}
     </Dropdown>
   );
+}
+
+function TodoStatusItem({ icon, label, value, selected, onChangeValue }: { icon: string, label: string, value: Status['value'], onChangeValue: (value: Status['value']) => void, selected: boolean }) {
+  console.log("Render TodoStatusItem", new Date().getTime());
+
+  const handleToggle = useCallback(() => onChangeValue(value), [onChangeValue, value])
+
+  return (
+    <li key={value} className={selected ? "bg-base-200" : ""}>
+      <a onClick={handleToggle}>
+        <span>{icon}</span>{" "}
+        {label}
+      </a>
+    </li>
+  )
 }
 
 
 interface TodoPrioritySelectProps { value: Priority['value'], onChangeValue: (value: Priority['value']) => void }
 function TodoPrioritySelect({ value, onChangeValue }: TodoPrioritySelectProps) {
   console.log("Render TodoPrioritySelect", new Date().getTime());
-    
+
+  // Memoization isn't necessary because strings are compared by value
   const icon = priorities.find(priority => priority.value === value)?.icon;
 
   return (
     <Dropdown trigger={<label className="btn btn-xs btn-ghost" tabIndex={0}>{icon}</label>}>
       <li className="menu-title"><span>Priority</span></li>
       {priorities.map(priority => (
-        <li key={priority.value} className={priority.value === value ? "bg-base-200" : ""}>
-          <a onClick={() => onChangeValue(priority.value)}>
-            <span>{priority.icon}</span>{" "}
-            {priority.label}
-          </a>
-        </li>
+        <TodoPriorityItem {...priority} key={priority.value} selected={priority.value === value} onChangeValue={onChangeValue} />
       ))}
     </Dropdown>
   );
 }
+  
+function TodoPriorityItem({ icon, label, value, selected, onChangeValue }: { icon: string, label: string, value: Priority['value'], onChangeValue: (value: Priority['value']) => void, selected: boolean }) {
+  const handleToggle = useCallback(() => onChangeValue(value), [onChangeValue, value])
 
+  return (
+    <li key={value} className={value === value ? "bg-base-200" : ""}>
+      <a onClick={handleToggle}>
+        <span>{icon}</span>{" "}
+        {label}
+      </a>
+    </li>
+  )
+}
 
 interface TodoAssignedSelectProps { value: User['id'][], onChangeValue: (value: User['id']) => void }
 function TodoAssignedSelect({ value, onChangeValue }: TodoAssignedSelectProps) {
   console.log("Render TodoAssignedSelect", new Date().getTime());
   const { users } = useUsers()
 
-  const initials = value.map(userId => users.find(user => user.id === userId)?.name[0]);
+  // Memoization is necessary because arrays are compared by reference
+  const initials = useMemo(() => value.map(userId => users.find(user => user.id === userId)?.name[0]), [value]);
 
   return (
     <Dropdown

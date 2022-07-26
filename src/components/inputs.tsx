@@ -6,21 +6,21 @@ export function ToggleableInput({ value, onChangeValue, onDelete }: ToggleableIn
   console.log("Render ToggleableInput", new Date().getTime());
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     onChangeValue(e.target.value);
-  }
+  }, [onChangeValue]);
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     setIsEditing(true);
-  };
+  }, [setIsEditing]);
 
-  const handleKeyUp =(e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyUp = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === "Escape") {
       setIsEditing(false);
     } else if ((e.key === "Backspace" || e.key === "Delete") && e.currentTarget.value === "") {
       onDelete();
     }
-  }
+  }, [onDelete, setIsEditing]);
 
   useEffect(() => {
     if (value === "") {
