@@ -1,5 +1,199 @@
-# 1. Welcome to React
-## 1. Warming up
+# Module: React 
+
+# 1. Warming up
+
+## 1.1 Introductie
+
+### 1 Omschrijving
+
+React is een open-source framework die ontwikkeld is door Facebook en de open-source community. Dit framework is uitgebracht in mei 2013.
+
+Veel populaire bedrijven werken met dit framework. Denk aan:
+
+- Facebook
+- Instagram
+- Airbnb
+- Netflix
+- Reddit
+- Uber
+
+
+
+
+> **Note**
+> The original React lesson mentions a bit about React's license [that is no longer true](https://www.codemag.com/article/1701041/Legal-Notes-What%E2%80%99s-the-Deal-with-ReactJS%E2%80%99s-Licensing-Scheme). React is released under an MIT license.
+
+
+### 1.0.1.1 Kracht in components 
+De kracht van React zit hem in components. Components zijn JavaScript functies die HTML[^1] returnen. Je kan een component zien als een bouwsteen waarmee je complete, dynamische web applicaties kunt bouwen.
+
+```jsx
+
+function MyButton() {
+  return (
+    <button>Ik ben een knopje</button>
+  );
+}
+```
+
+React stelt je in staat om eenvoudig allemaal kleine bouwstenen te maken en deze aan elkaar te knopen. Elke bouwsteen kan je meerdere keren hergebruiken.
+
+```jsx
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Welcome to my app</h1>
+      <MyButton />
+    </div>
+  );
+}
+```
+
+Elke bouwsteen (of "component") houdt zijn eigen staat bij en kan daardoor los van andere componenten functioneren. Verandert er iets in de staat van een component? Dan wordt dat component opnieuw naar je DOM gerenderd. React zorgt hier automatisch voor!
+
+[^1]: Technisch gezien, returnen ze "JSX". Daar leer je meer over in de komende exercises.
+
+## Imperative en Declarative UI
+
+React was aan het begin heel erg geinspireerd door Angular.
+
+Beide Angular en React zijn ontstaan als een reactie op JQuery. In "the old days"[^1], was Javascript een nachtmerrie.
+
+Toendertijd was de enige manier om via Javascript toegang te krijgen aan de DOM (de boom van HTML elementen), door `getElemenyById`. 
+
+```html
+<html>
+
+    <div id="my-div">
+        Hello world
+    </div>
+
+    <button id="my-button">
+        My Button
+    <button>
+
+    <script>
+
+        document.getElementById('my-button').addEventListener('click', function () {
+            document.getElementById('my-div').classList.toggle('red') // Check toggleClass
+        })
+
+    </script>
+</html>
+
+```
+
+Dat is heel veel code om alleen de class van een component te veranderen aan de hand van een button click. Het wordt alleen erger naarmate de functionaliteit ingewikkelder wordt. 
+
+```html
+<script>
+
+$('#my-button').on('click', function() {
+    $('#my-div').toggleClass('red')
+})
+
+</script>
+```
+
+Veel compacter! 
+
+Waar het probleem onstaat is bij grotere applicaties. Die veel requests naar de server sturen en terugkrijgen. 
+
+Met een imperative aanpak, vertel je de DOM wat er moet gebeuren (imperatief van het latijn voor bevel). Met JQuery (en vanilla Javascript) vertel je een element om de classe `red` te switchen.
+
+
+
+
+
+
+[^1]: Het is nog steeds een nachtmerrie, maar het was toen nog erger.
+
+
+## React vs. Andere Frameworks
+
+React is bekend voor minimaliteit. 
+
+Vergelijk [Angular](https://angular.io/), de historische "vijand" van React ontworpen door Google. Angular komt met "batteries included" — de core product heeft al oplossing bedacht voor veel voorkomende problemen zoals routing, forms, internationalization ("i18n") en meer. 
+
+Bij React, worden deze oplossingen overgelaten aan de community. 
+- Voor routing moet je kiezen tussen bijvoorbeeld [Remix/react-router](https://github.com/remix-run/react-router) en [Next.js](https://nextjs.org/).
+- Voor formulieren, [react hook form](https://react-hook-form.com/) of [formik](https://github.com/jaredpalmer/formik) of misschien vanilla. 
+- Voor i18n, [react-i18next](https://react.i18next.com/) of [React-intl](https://github.com/formatjs/formatjs) of [next-intl](https://github.com/amannn/next-intl/tree/main/packages/next-intl/src)...
+- Voor data-fetching, [react-query](https://react-query.tanstack.com/) of [swr](https://swr.vercel.app/) (of weer Remix). 
+
+Dan moet je nog een component library kiezen, authenticatie bedenken, misschien een state management library, en zo voort. 
+
+Dit kan voor een beginner (en zelfs een gevorderde React developer) overweldigend zijn. Maar het heeft voordelen. Dankzij het feit dat React klein blijft, heeft de community meer vrijheid om te besluiten wat de beste manier is om naar vore te gaan.
+
+Bijvoorbeeld, in 2019, is React overgestapt van [class-based components naar functional components](https://reactjs.org/blog/2019/02/06/react-v16.8.0.html). Dit is een belangrijke stap geweest wat vaak naar veel heldere code heeft geleid. 
+
+Zier hier een voorbeeld van een component wat een verbinding met een chatroom heeft. Deze verbinden moet aangemaakt worden als de component voor het eerst is gerendered, maar het moet ook afgebroken worden als de component verwijderd wordt (omdat je naar een nieuwe pagina gaat).
+
+Met class-based components, worde deze faze van de "lifecycle" gesplits.
+
+```jsx
+
+class MyChatRoom {
+    // Runs the first time the component is rendered (on "mount")
+    componentDidMount() {
+        chatroom.connect()
+    }
+
+    // Runs before the component is unrendered (on "unmount")
+    componentWillUnmount() {    
+        chatroom.disconnect()
+    }
+
+    render() {
+        return <div>...</div>
+    }
+}
+
+```
+
+Met functional components schrijf je een "hook":
+
+
+```jsx
+function MyChatRoom() {
+
+    // Hooks let you bundle logic by meaning rather than lifecyle
+    useEffect(() => {
+        chatroot.connect()
+
+        // De returnwaarde is een functie die gecalld wordt op "unmount"
+        return () => chatroom.disconnect() 
+    }, [])
+
+    return <div>...</div>
+}
+
+```
+
+Nog beter, je kan deze functionaliteit abstraheren, dus ook hergebruiken in andere components.
+
+```jsx
+function useChatRoom () {
+    useEffect(() => {
+        chatroom.connect()
+        return () => chatroom.disconnect()
+    })
+}
+
+function MyChatRoom() {
+    useChatRoom()
+
+    return <div>...</div>
+}
+
+```
+
+
+
+
+
+### 1.0.2 
+
 
 Goals:
 - What is a component?
